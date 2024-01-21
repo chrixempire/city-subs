@@ -46,7 +46,7 @@ const closeCart = (e) => {
     position: relative;
     top: 0;
     left: auto;
-    z-index: 2;
+    z-index: 1000;
 }
 
 .full-cart-bg {
@@ -78,7 +78,7 @@ const closeCart = (e) => {
     top: 50%;
     right: 0%;
     transform: translate(-0%, -50%);
-    z-index: 99;
+    z-index: 1000;
 }
 
 .cart-bg {
@@ -93,7 +93,7 @@ const closeCart = (e) => {
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 90;
+    z-index: 900;
     background-color: rgba(0, 0, 0, 0.3);
 }
 
@@ -170,7 +170,7 @@ header {
     top: 50%;
     right: 0%;
     transform: translate(-0%, -50%);
-    z-index: 99;
+    z-index: 1000;
 }
 .cart-header {
     width: 100%;

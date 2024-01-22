@@ -4,10 +4,10 @@
             <section class="section-wrapper">
                 <div class="logo-container">
                     <div class="logo">
-                    <div class="logo-icon" v-html="logo"></div>
-                </div>
+                        <div class="logo-icon" v-html="logo"></div>
+                    </div>
 
-                    <div class="cart" @click="triggerCart($event)">
+                    <div class="cart" @click="navigateToNewPage($event)">
                         <div class="circle">
                             <div class="cart-icon" v-html="cart"></div>
                         </div>
@@ -27,18 +27,24 @@
 
 <script setup>
 import { ref, defineEmits } from 'vue'
+import { useRouter } from 'vue-router';
 import { logo, search, cart } from "../../utils/svg";
 const TotalCart = ref(2)
-const emit = defineEmits(['openCart'])
-const triggerCart = (e) => {
-    emit('openCart')
-}
+
+
+
+const router = useRouter();
+const navigateToNewPage = (e) => {
+
+  router.push('/cart'); 
+};
 </script>
 
 <style scoped>
-.container{
+.container {
     margin: 16px 16px 20px 16px;
 }
+
 .dashboard-wrapper {
     width: 100%;
     display: flex;
@@ -62,9 +68,10 @@ section {
     align-items: center;
     background: #fff;
 
-    
+
 }
-.logo-icon{
+
+.logo-icon {
     border: 1px solid green;
 }
 

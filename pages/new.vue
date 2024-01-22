@@ -1,131 +1,118 @@
 <template>
-    <div class="container">
-      <button @click="openModal($event)">Open</button>
-    </div>
-  
-    <transition :name="transitionName">
-      <div v-if="showModal" class="modal-overlay" @click="closeModal">
-        <div :class="{ 'modal-content': true, 'slide-in': showModal, 'slide-in-mobile': showModalMobile }">
-          <!-- Your modal content goes here -->
-          <div class="modal-slot">
-            <slot></slot>
-          </div>
+ <div class="cont">
+    <div class="logo-container">
+        <div class="logo-content">
+            <div class="logo-mobile-icon" v-html="logo"></div>
+
         </div>
-      </div>
-    </transition>
-  </template>
-  
-  <script setup>
-  import { ref, watch } from 'vue';
-  
-  const showModal = ref(false);
-  const showModalMobile = ref(false);
-  const transitionName = ref('fade');
-  
-  const openModal = () => {
-    showModal.value = true;
-    if (window.innerWidth <= 450) {
-      showModalMobile.value = true;
-      transitionName.value = 'slide-in-mobile';
-    }
-  };
-  
-  const closeModal = () => {
-    showModal.value = false;
-    showModalMobile.value = false;
-    transitionName.value = 'fade';
-  };
-  
-  watch(() => window.innerWidth, (newWidth) => {
-    if (showModal.value && newWidth <= 450) {
-      showModalMobile.value = true;
-      transitionName.value = 'slide-in-mobile';
-    } else {
-      showModalMobile.value = false;
-      transitionName.value = 'fade';
-    }
-  });
-  
-  </script>
-  
-  <style scoped>
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+
+        <div class="cart" @click="navigateToNewPage($event)">
+            <div class="circle">
+                <div class="cart-icon" v-html="cart"></div>
+            </div>
+            <div class="badge">
+                <p>{{ TotalCart }}</p>
+            </div>
+        </div>
+     
+    </div>
+
+    <div class="filter-tabs">
+            <div v-for="(tab, index) in tabs" :key="index" class="tab tablet" @click="toggleTab(index)"
+                :class="{ clicked: activeTab === index }">
+                <p class="text-body-large-medium medium">{{ tab }}</p>
+            </div>
+        </div>
+ </div>
+</template>
+
+<script setup>
+import { ref, defineEmits } from 'vue'
+import { logo, search, cart } from "../../utils/svg";
+const TotalCart = ref(2)
+const emit = defineEmits(['navigateToNewPage', 'openCartModal', 'filterProducts'])
+const navigateToNewPage = (e) => {
+    emit('navigateToNewPage')
+}
+const props = defineProps(['products',]);
+const activeTab = ref(0);
+const tabs = ref([
+  "All Categories",
+  "Classic sub",
+  "Special sub",
+  "Burger",
+  "Pasteries",
+  "Platters",
+  "Toppings",
+]);
+
+const toggleTab = (index) => {
+    activeTab.value = index;
+    emit('filterProducts', tabs[index]);
+    console.log(index)
+};
+
+</script>
+
+<style scoped>
+.logo-container {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-  }
-  
-  .modal-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-  }
-  
-  .modal-slot {
-    width: 400px;
-    height: 500px;
-  }
-  
-  .fade-enter-active, .fade-leave-active {
-    transition: opacity 0.5s;
-  }
-  
-  .fade-enter-from, .fade-leave-to {
-    opacity: 0;
-  }
-  
-  .slide-in-enter-active, .slide-in-leave-active {
-    transition: transform 0.5s;
-  }
-  
-  .slide-in-enter-from, .slide-in-leave-to {
-    transform: translateY(100%);
-  }
-  
-  .slide-in-mobile-enter-active, .slide-in-mobile-leave-active {
-    transition: transform 0.5s;
-  }
-  
-  .slide-in-mobile-enter-from, .slide-in-mobile-leave-to {
-    transform: translateY(0);
-  }
-  
-  @media screen and (max-width: 650px) {
-    .modal-overlay {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-    }
-  
-    .modal-content {
-      width: 100%;
-      display: flex;
-      padding: 24px;
-      border-radius: 24px 24px 0px 0px;
-    }
-  }
-  
-  @media screen and (max-width: 450px) {
-    .slide-in-mobile-enter-active, .slide-in-mobile-leave-active {
-      transition: transform 0.5s;
-    }
-  
-    .slide-in-mobile-enter-from, .slide-in-mobile-leave-to {
-      transform: translateY(100%);
-    }
-  }
-  
-  </style>
-  
+    width: 100%;
+    padding-right: 10px;
+    border: 1px solid blue;
+}
+
+.cart {
+    position: relative;
+    cursor: pointer;
+    border: 1px solid red;
+}
+
+.badge p {
+    color: var(--white);
+    text-align: center;
+    font-family: var(--secondary---font--family);
+    font-size: 10.793px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 9.549px;
+}
+
+
+
+
+.filter-tabs {
+    border: 1px solid red;
+    height: 100px;
+    width: auto;
+    display: flex;
+    /* flex-wrap: nowrap; */
+    /* flex-direction: column; */
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    padding: 6px 3px;
+}
+
+.filter-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.tab {
+    white-space: nowrap;
+}
+/* .tablet{
+   min-width: 130px;
+} */
+.tab p {
+    color: var(--grey-grey1);
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 18px;
+}</style>

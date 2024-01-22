@@ -111,7 +111,8 @@ const handleScroll = () => {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    padding-bottom:16px ;
+    padding:0px 16px 16px 16px ;
+    /* border: 1px solid red; */
     /* Adjust the z-index value based on your layout */
 }
     .sticky {
@@ -140,8 +141,9 @@ const handleScroll = () => {
   }
   .tab {
     display: flex;
-    width: 500px;
-    /* border: 1px solid red; */
+
+    white-space: nowrap;
+
     height: 32px;
     padding: 8px 12px;
   }

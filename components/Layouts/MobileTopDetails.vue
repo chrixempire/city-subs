@@ -1,6 +1,7 @@
 <template>
     <div class="container">
         <div class="dashboard-wrapper">
+            
             <section class="section-wrapper">
                 <div class="logo-container">
                     <div class="logo-content">
@@ -17,6 +18,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- <MobileHeader/> -->
                 <div class="search-input">
                     <div class="search-icon" v-html="search"></div>
                     <input class="input-search" placeholder="Search for products" />

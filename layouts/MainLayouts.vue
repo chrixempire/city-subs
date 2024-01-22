@@ -66,8 +66,7 @@ onUnmounted(() => {
 
 const handleScroll = () => {
     const scrollY = window.scrollY;
-    const threshold = 100; // Adjust this value based on your design
-
+    const threshold = 0; 
     isSticky.value = scrollY > threshold;
 };
 </script>
@@ -133,7 +132,7 @@ const handleScroll = () => {
     .filter-tabs {
         width: 100%;
         display: flex;
-        flex-wrap: nowrap;
+        /* flex-wrap: nowrap; */
         justify-content: flex-start;
         align-items: flex-start;
         gap: 12px;
@@ -147,6 +146,8 @@ const handleScroll = () => {
   }
   .tab {
     display: flex;
+    width: 500px;
+    /* border: 1px solid red; */
     height: 32px;
     padding: 8px 12px;
   }

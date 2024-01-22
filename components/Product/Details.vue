@@ -5,7 +5,7 @@
             {{ product?.name }}
         </p>
         <p class="text-body-large-regular regular product-price">
-            {{ product?.price }}
+            ₦{{ product?.price }}
         </p>
         </div>
         <div class="product-snippet">

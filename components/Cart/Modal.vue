@@ -13,7 +13,7 @@
 
                     </div>
                     <div class="cart-content">
-                        <CartEmptyState class="empty-state"/>
+                        <CartEmptyState class="empty-state" @placeOrder="closeCart($event)"/>
                     </div>
                 </div>
             </transition>
@@ -174,10 +174,13 @@ header {
 }
 .cart-header {
     width: 100%;
-    height: auto;
+    height: 120px;
     background: var(--White);
     box-shadow: 0px 1px 3px 0px rgba(50, 50, 71, 0.10), 0px 0px 1px 0px rgba(12, 26, 75, 0.20);
-    padding: 16px 10px ;
+    padding: 0px 10px ;
+    padding-top: 30px;
+    display: flex;
+    justify-items: center;
 }
 header {
     display: flex;

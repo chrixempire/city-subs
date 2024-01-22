@@ -26,8 +26,15 @@
   </template>
   
   <script setup>
+import { ref} from 'vue'
   import { emptyCart } from "../utils/svg";
   const isLoading = ref(false);
+
+
+  const emit = defineEmits(['placeOrder'])
+const placeOrder= (e) => {
+    emit('placeOrder')
+}
   </script>
   
   <style scoped>

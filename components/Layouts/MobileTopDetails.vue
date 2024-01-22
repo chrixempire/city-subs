@@ -3,8 +3,9 @@
         <div class="dashboard-wrapper">
             <section class="section-wrapper">
                 <div class="logo-container">
-                    <div class="logo">
-                        <div class="logo-icon" v-html="logo"></div>
+                    <div class="logo-content">
+                        <div class="logo-mobile-icon" v-html="logo"></div>
+                       
                     </div>
 
                     <div class="cart" @click="navigateToNewPage($event)">
@@ -71,7 +72,7 @@ section {
 
 }
 
-.logo-icon {
+.logo-content {
     border: 1px solid green;
 }
 

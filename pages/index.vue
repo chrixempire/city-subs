@@ -243,9 +243,7 @@ const updateFilteredProducts = (selectedTab) => {
   margin-bottom: 80px;
 }
 
-.product-content {
-  width: 100%;
-}
+
 
 
 .Addons-container {
@@ -266,6 +264,7 @@ const updateFilteredProducts = (selectedTab) => {
   align-items: center;
   gap: 48px;
   flex-direction: column;
+  margin-bottom: 100px;
 }
 
 
@@ -277,6 +276,9 @@ const updateFilteredProducts = (selectedTab) => {
     align-items: center;
     gap: 40px;
     margin: 0px 16px 16px 16px;
+  }
+  .product-content{
+    margin-bottom: 100px;
   }
 
 }</style>

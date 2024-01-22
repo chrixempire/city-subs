@@ -55,7 +55,7 @@ const triggerCart = (e) => {
 .search-input {
     display: flex;
     position: relative;
-    width: 30%;
+    width: 50%;
 }
 
 .search-icon {

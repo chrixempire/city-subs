@@ -2,8 +2,8 @@
     <div>
       <div class="top-details">
         <section class="top-detail">
-          <LayoutsTopDetails @openCart="openCartModal" class="desktop" />
-          <LayoutsMobileTopDetails @openCart="openCartModal" class="mobile" />
+            <LayoutsTopDetails v-if="!isMobile" @openCart="openCartModal" class="desktop" />
+        <LayoutsMobileTopDetails v-if="isMobile" @openCart="openCartModal" class="mobile" />
         </section>
         <div class="filter-tabs">
           <div v-for="(tab, index) in tabs" :key="index" class="tab" @click="toggleTab(index)" :class="{ clicked: activeTab === index }">
@@ -20,7 +20,7 @@
   </template>
   
   <script setup>
-  import { ref, defineEmits, defineProps } from 'vue';
+  import { ref, defineEmits, defineProps,  onMounted } from 'vue';
   
   const props = defineProps(['products', 'tabs']);
   const activeTab = ref(0);
@@ -35,9 +35,29 @@
   const openCartModal = () => {
       emit('openCartModal');
   };
+ 
+  const isMobile = ref(process.client ? window.innerWidth <= 450 : false);
+
+onMounted(() => {
+  if (process.client) {
+    const handleResize = () => {
+      isMobile.value = window.innerWidth <= 450;
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }
+});
   </script>
   
 <style scoped>
+    .top-detail{
+        padding: 0px;
+    }
 .top-details {
     position: sticky;
     top: 0;
@@ -56,21 +76,10 @@
     gap: 8px;
 }
 
-.desktop {
-    display: block;
-}
 
-.mobile {
-    display: none;
-}
 
 @media screen and (max-width: 450px) {
-    .desktop{
-        display: none;
-    }
-    .mobile {
-        display: block;
-    }
+
     .top-details {
     position: sticky;
     top: 0;
@@ -78,7 +87,7 @@
     background: white;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 0px;
     padding:0px 16px 16px 16px ;
     transition: all 0.3s ease; /* Add a smooth transition */
 }

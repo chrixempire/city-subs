@@ -45,7 +45,7 @@ const navigateToNewPage = (e) => {
 
 <style scoped>
 .container {
-    margin: 16px 16px 20px 16px;
+    margin: 16px 0px 20px 0px;
 }
 
 .dashboard-wrapper {
@@ -74,9 +74,6 @@ section {
 
 }
 
-.logo-content {
-    border: 1px solid green;
-}
 
 .search-input {
     display: flex;

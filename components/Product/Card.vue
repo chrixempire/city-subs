@@ -19,7 +19,13 @@
 
 <script setup>
 import { ref, defineEmits, defineProps } from "vue";
-const props = defineProps(['data']);
+// const props = defineProps(['data']);
+const props = defineProps({
+ data: {
+     type: Object,
+     required: true,
+   },
+})
 const emits = defineEmits(['clickedButton']);
 const openModal = () => {
   emits('clickedButton');

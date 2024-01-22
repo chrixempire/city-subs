@@ -64,7 +64,17 @@ const selectItem = (value) => {
     selectedCard.value = value;
     console.log(value);
 };
-const props = defineProps(["data", 'Addons', 'closed',]);
+const props = defineProps({
+ data: {
+     type: Object,
+     required: true,
+   },
+})
+const emit = defineEmits (['closed'])
+const closed = (e) => {
+    emit('closed')
+}
+
 let selectedFoods = ref([]);
 
 const quantity = ref(1);

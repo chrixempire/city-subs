@@ -8,7 +8,7 @@
             <div class="filter-tabs">
                 <div v-for="(tab, index) in tabs" :key="index" class="tab" @click="toggleTab(index)"
                     :class="{ clicked: activeTab === index }">
-                    <P class="text-body-large-medium medium">{{ tab }}</P>
+                    <p class="text-body-large-medium medium">{{ tab }}</p>
                 </div>
             </div>
         </div>
@@ -21,35 +21,63 @@
 </template>
   
 <script setup>
-import { ref, defineEmits, onMounted, onUnmounted } from 'vue';
-const tabs = ref([
-    "All Categories",
-    "Classic Sub",
-    "Special sub",
-    "Burger",
-    "Pasteries",
-    "Platters",
-    "Toppings",
-]);
+import { ref, defineEmits, onMounted,defineProps, onUnmounted } from 'vue';
+
+
+// const filteredProducts = ref([]);
+// const Products = ref([]);
+// const toggleTab = (index) => {
+//     activeTab.value = index;
+//     filterItemsByType();
+// };
+
+// const filterItemsByType = () => {
+//     const selectedType = tabs.value[activeTab.value];
+//     filteredProducts.value =
+//         selectedType === "All Categories"
+//             ? Products.value
+//             : Products.value.filter((Product) => Product.type === selectedType);
+// };
+
+
+
+
+const props = defineProps(['products', 'tabs']);
+// const tabs = ref([
+//   "All Categories",
+//   "Classic Sub",
+//   "Special sub",
+//   "Burger",
+//   "Pasteries",
+//   "Platters",
+//   "Toppings",
+// ]);
 const activeTab = ref(0);
 
-const filteredProducts = ref([]);
-const Products = ref([]);
+// const filteredProducts = computed(() => {
+//   if (activeTab.value === 0) {
+//     return props.products;
+//   } else {
+//     const selectedTab = tabs.value[activeTab.value];
+//     return props.products.filter(product => product.snippet === selectedTab);
+//   }
+
+// });
+const tabs = props.tabs
+const emit = defineEmits(['openCartModal', 'filterProducts']);
+
 const toggleTab = (index) => {
-    activeTab.value = index;
-    filterItemsByType();
-};
-
-const filterItemsByType = () => {
-    const selectedType = tabs.value[activeTab.value];
-    filteredProducts.value =
-        selectedType === "All Categories"
-            ? Products.value
-            : Products.value.filter((Product) => Product.type === selectedType);
+  activeTab.value = index;
+  emit('filterProducts', tabs[index]);
+  console.log(index)
 };
 
 
-const emit = defineEmits(['openCartModal']);
+
+
+
+
+
 const isSticky = ref(false);
 
 const openCartModal = (e) => {

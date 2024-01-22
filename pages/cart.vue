@@ -28,6 +28,7 @@ const closeCart = (e) => {
 
   router.push('/'); 
 };
+
 </script>
 
 <style scoped>

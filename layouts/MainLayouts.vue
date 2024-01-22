@@ -13,7 +13,7 @@
       </div>
       <div>
         <section>
-          <slot></slot>
+          <slot name="container"></slot>
         </section>
       </div>
     </div>
@@ -75,7 +75,37 @@ onMounted(() => {
     align-items: center;
     gap: 8px;
 }
-
+@media screen and (max-width: 970px) {
+    .filter-tabs {
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 8px;
+        overflow-x: auto;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+        padding: 6px 16px;
+      
+    }
+    .filter-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .top-details {
+    position: sticky;
+    z-index: 98;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding-bottom: 32px;
+    transition: all 0.3s ease; /* Add a smooth transition */
+}
+.tab {
+    display: flex;
+    white-space: nowrap;
+}
+}
 
 
 @media screen and (max-width: 450px) {
@@ -94,7 +124,6 @@ onMounted(() => {
     .filter-tabs {
         width: 100%;
         display: flex;
-        /* flex-wrap: nowrap; */
         justify-content: flex-start;
         align-items: flex-start;
         gap: 12px;

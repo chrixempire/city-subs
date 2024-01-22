@@ -1,12 +1,15 @@
 <template>
   <div class="location-modal">
     <ModalWrapper :showModal="showCreatedModal">
-      <Location @NextPage="closedModal" />
+      <template v-slot:content>
+        <Location @NextPage="closedModal" />
+      </template>
     </ModalWrapper>
   </div>
   <div>
     <MainLayouts @openCartModal="openModal($event)" :tabs="tabs" :products="products" @filterProducts="updateFilteredProducts">
-      <CartModal :showModal="displayModal" @closeCart="closeModal($event)" />
+      <template v-slot:container>
+        <CartModal :showModal="displayModal" @closeCart="closeModal($event)" />
       <div class="overall-container">
         <div class="products">
           <div v-if="!products.length" class="web-loader">
@@ -21,8 +24,8 @@
           </div>
           <div class="modals">
             <ModalWrapper :showModal="showModal">
-              <template>
-                <div class="Addons-container">
+              <template v-slot:content>
+                <div class="Addons-container" v-if="selectedProduct">
                   <Addons :data="selectedProduct" @closed="closemodal" />
                 </div>
               </template>
@@ -30,6 +33,7 @@
           </div>
         </div>
       </div>
+      </template>
     </MainLayouts>
   </div>
 </template>
@@ -231,7 +235,7 @@ const updateFilteredProducts = (selectedTab) => {
   justify-content: center;
   align-items: center;
   gap: 64px;
-  margin: 0px 100px 100px 100px;
+  margin: 0px 5% 5% 5%;
 }
 
 .products {

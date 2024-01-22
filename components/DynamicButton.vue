@@ -6,7 +6,7 @@
       :disabled="disabled || isLoading"
     >
       <span v-if="showText && !isLoading"> {{ buttonText }} {{ buttonPrice }} </span>
-      <slot></slot>
+      <slot name="price"></slot>
       <slot v-if="!isLoading" name="svg"></slot>
       <LoaderButton :size="size" :isLoading="isLoading"/>
     </button>

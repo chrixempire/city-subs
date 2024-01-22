@@ -2,7 +2,7 @@
     <div class="modal-overlay" v-show="showModal" :class="{  'show-modal': showModal }">
       <div class="modal-container" :class="{ 'show-modal': showModal  }" @click.stop>
         <div class="modal-content">
-          <slot></slot>
+          <slot name="content"></slot>
         </div>
       </div>
     </div>

@@ -1,55 +1,20 @@
 <template>
   <div class="container">
     <button class="minus-button" @click="decreaseCart($event)">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-      >
-        <path
-          d="M6 12H18"
-          stroke="#303237"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
+      <div class="minus-icon" v-html="minus"></div>
     </button>
     <div class="quantity">
       <h4 class="text-heading-4-medium">{{ quantity }}</h4>
     </div>
     <button class="plus-button" @click="increaseCart($event)">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-      >
-        <path
-          d="M6 12H18"
-          stroke="#303237"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-        <path
-          d="M12 18V6"
-          stroke="#303237"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
+      <div class="plus-icon" v-html="plus"></div>
     </button>
   </div>
 </template>
 
 <script setup>
 import { ref, defineProps, defineEmits } from "vue";
-
+import { plus,minus } from "../../utils/svg";
 const props = defineProps({
   quantity: {
     type: Number,

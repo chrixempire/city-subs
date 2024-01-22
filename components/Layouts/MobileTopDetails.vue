@@ -5,8 +5,7 @@
             <section class="section-wrapper">
                 <div class="logo-container">
                     <div class="logo-content">
-                        <div class="logo-mobile-icon" v-html="logo"></div>
-                       
+                        <div class="logo-mobile-icon" v-html="mobileLogo"></div>
                     </div>
 
                     <div class="cart" @click="navigateToNewPage($event)">
@@ -31,7 +30,7 @@
 <script setup>
 import { ref, defineEmits } from 'vue'
 import { useRouter } from 'vue-router';
-import { logo, search, cart } from "../../utils/svg";
+import { mobileLogo, search, cart } from "../../utils/svg";
 const TotalCart = ref(2)
 
 

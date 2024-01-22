@@ -7,23 +7,8 @@
           v-model="selected"
           @change="handleCheckboxChange"
         />
-        <svg
-        v-if="selected"
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-        >
-          <rect width="24" height="24" rx="4" fill="#121212" />
-          <path
-            d="M6.59961 12.0004L10.1996 15.6004L17.3996 8.40039"
-            stroke="white"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
+        
+        <div class="squareChecked-icon" v-if="selected" v-html="squareChecked"></div>
       </label>
       <div class="food-details">
           <div><p class="text-body-large-regular  regular">{{ name }}</p></div>
@@ -33,6 +18,7 @@
   </template>
   
   <script setup>
+    import { squareChecked } from "../../utils/svg";
   import { ref, defineProps, defineEmits } from 'vue';
   const emit = defineEmits();
   const { name, price } = defineProps(['name', 'price']);

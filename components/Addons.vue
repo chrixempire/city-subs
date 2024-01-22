@@ -3,26 +3,28 @@
         <div class="modal-content">
             <div class="cancel-btn">
                 <div class="cancel" @click="closed">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
-                        <path d="M3.3335 13.6361L12.6668 4.30273M3.3335 4.30273L12.6668 13.6361L3.3335 4.30273Z"
-                            stroke="#433955" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
+                    <div class="minus-icon" v-html="cancel"></div>
                 </div>
             </div>
             <div class="image-cont">
                 <DynamicImage :imageUrl="data?.image" :isModalView="true" />
             </div>
             <div class="product-details">
-                <ProductDetails class="details" :product="data" />
+
+                <template v-if="data">
+                    <ProductDetails class="details" :product="data" />
+                </template>
 
                 <div class="Addons" v-if="data?.Addons">
                     <div class="selective">
                         <p class="text-body-small-medium medium">SELECT TYPE</p>
                         <div class="flexed-select">
                             <div class="select-type" v-for="(select, index) in data?.Addons?.selections" :key="index">
-                                <DynamicSelect   :data="select" :selectedItem="selectedCard" @selectItem="selectItem"
+                                <DynamicSelect :data="select" :selectedItem="selectedCard" @selectItem="selectItem"
                                     :slotNeeded="slotNeeded">
-                                    <DynamicImage :imageUrl="select?.image" :isModalView="true" />
+                                    <template v-slot:image>
+                                        <DynamicImage :imageUrl="select?.image" :isModalView="true" />
+                                    </template>
                                 </DynamicSelect>
                             </div>
                         </div>
@@ -43,9 +45,11 @@
                         @decreaseQuantity="decreaseQuantity" class="count" />
                     <DynamicButton class="bolder text-button-standard standard" @clickButton="addToCart" buttonText="Add"
                         :isLoading="isLoading" :showText="true" size="standard" type="primary">
-                        <p class="text-body-large-bold bolder">
-                            (₦{{ buttonPrice }})
-                        </p>
+                        <template v-slot:price>
+                            <p class="text-body-large-bold bolder">
+                                (₦{{ buttonPrice }})
+                            </p>
+                        </template>
                     </DynamicButton>
                 </div>
             </div>
@@ -55,7 +59,7 @@
     
 <script setup>
 import { ref, defineProps, computed } from "vue";
-
+import { cancel } from "../../utils/svg";
 
 const selectedCard = ref("");
 const isLoading = ref(false);
@@ -65,12 +69,12 @@ const selectItem = (value) => {
     console.log(value);
 };
 const props = defineProps({
- data: {
-     type: Object,
-     required: true,
-   },
+    data: {
+        type: Object,
+        required: true,
+    },
 })
-const emit = defineEmits (['closed'])
+const emit = defineEmits(['closed'])
 const closed = (e) => {
     emit('closed')
 }
@@ -107,11 +111,13 @@ const addToCart = () => {
 </script>  
     
 <style scoped>
-.modal-content{
-    padding-bottom: 24px ;
+.modal-content {
+    padding-bottom: 24px;
 }
+
 .cancel {
-    background: var(--grey---grey6);;
+    background: var(--grey---grey6);
+    ;
     width: 48px;
     height: 48px;
     display: flex;
@@ -141,7 +147,7 @@ button svg {
 }
 
 .product-details {
-    padding-top: 16px ;
+    padding-top: 16px;
     display: flex;
     justify-content: center;
     gap: 48px;

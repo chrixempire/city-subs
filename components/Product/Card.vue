@@ -10,7 +10,9 @@
         :isProductView="true"
       />
 
-      <ProductDetails class="details" :product="data" />
+      <template v-if="data">
+        <ProductDetails class="details" :product="data" />
+      </template>
     </div>
   </div>
 
@@ -19,13 +21,12 @@
 
 <script setup>
 import { ref, defineEmits, defineProps } from "vue";
-// const props = defineProps(['data']);
 const props = defineProps({
- data: {
-     type: Object,
-     required: true,
-   },
-})
+  data: {
+    type: Object,
+    required: true,
+  },
+});
 const emits = defineEmits(['clickedButton']);
 const openModal = () => {
   emits('clickedButton');

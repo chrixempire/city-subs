@@ -55,7 +55,7 @@ const triggerCart = (e) => {
 .search-input {
     display: flex;
     position: relative;
-    width: 50%;
+    width: 40%;
 }
 
 .search-icon {
@@ -82,4 +82,18 @@ const triggerCart = (e) => {
     font-weight: 500;
     line-height: 9.549px;
 }
+@media screen and (max-width: 1450px) {
+    .search-input {
+    display: flex;
+    position: relative;
+    width: 50%;
+}
+}
+@media screen and (max-width: 970px) {
+    .section-wrapper {
+        padding: 0px 16px ;
+    }
+
+}
+
 </style>

@@ -2,7 +2,7 @@
     <div>
       <div class="top-details">
         <section class="top-detail">
-            <LayoutsTopDetails v-if="!isMobile" @openCart="openCartModal" class="desktop" />
+            <LayoutsTopDetails v-if="!isMobile" @openCart="openCartModal" class="desktop" :carts="carts" />
         <LayoutsMobileTopDetails v-if="isMobile" @openCart="openCartModal" class="mobile" />
         </section>
         <div class="filter-tabs">
@@ -22,7 +22,7 @@
   <script setup>
   import { ref, defineEmits, defineProps,  onMounted } from 'vue';
   
-  const props = defineProps(['products', 'tabs']);
+  const props = defineProps(['products', 'tabs','carts']);
   const activeTab = ref(0);
   const tabs = props.tabs;
   const emit = defineEmits(['openCartModal', 'filterProducts']);

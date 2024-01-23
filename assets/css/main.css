@@ -144,6 +144,9 @@ p {
 .text-grey1 {
     color: var(--grey---grey1)
 }
+.text-grey2 {
+    color: var(--grey---grey2)
+}
 
 .text-grey3 {
     color: var(--grey---grey3)

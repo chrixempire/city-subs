@@ -13,7 +13,13 @@
         </section>
         <section class="content-section">
             <div class="cart-content">
-                        <CartEmptyState class="empty-state" @placeOrder="closeCart($event)"/>
+                        
+          <div class="cart-list" v-if="cart?.length">
+            <CartAdded v-for="(item, index) in cart" :key="index" :data="item"/>
+          </div>
+          <div class="cart-empty-state" v-else>
+            <CartEmptyState class="empty-state" @placeOrder="closeCart($event)" />
+          </div>
                     </div>
         </section>
     </div>
@@ -24,6 +30,7 @@ import { ref} from 'vue'
 
 import { useRouter } from 'vue-router';
 const router = useRouter();
+const props = defineProps(['cart']);
 const closeCart = (e) => {
 
   router.push('/'); 

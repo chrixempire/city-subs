@@ -25,7 +25,8 @@
 <script setup>
 import { ref, defineEmits } from 'vue'
 import { logo, search, cart } from "../../utils/svg";
-const TotalCart = ref(2)
+const props = defineProps(['carts']);
+const TotalCart = props?.carts
 const emit = defineEmits (['openCart'])
 const triggerCart = (e) => {
     emit('openCart')

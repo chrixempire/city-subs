@@ -7,9 +7,9 @@
     </ModalWrapper>
   </div>
   <div>
-    <MainLayouts @openCartModal="openModal($event)" :tabs="tabs" :products="products" @filterProducts="updateFilteredProducts">
+    <MainLayouts @openCartModal="openModal($event)" :tabs="tabs" :products="products" @filterProducts="updateFilteredProducts" :carts="cartLength">
       <template v-slot:container>
-        <CartModal :showModal="displayModal" @closeCart="closeModal($event)" />
+        <CartModal :carts="cart" :showModal="displayModal" @closeCart="closeModal($event)" />
       <div class="overall-container">
         <div class="products">
           <div v-if="!products.length" class="web-loader">
@@ -26,21 +26,46 @@
             <ModalWrapper :showModal="showModal">
               <template v-slot:content>
                 <div class="Addons-container" v-if="selectedProduct">
-                  <Addons :data="selectedProduct" @closed="closemodal" />
+                  <Addons :data="selectedProduct" @closed="closemodal"  @addToCart="addToCart" />
                 </div>
               </template>
             </ModalWrapper>
           </div>
         </div>
       </div>
+      
       </template>
     </MainLayouts>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
 import MainLayouts from "/layouts/MainLayouts.vue";
+import { ref, watchEffect } from "vue";
+import { cart } from "~/cart.js";
+const cartLength = ref(cart.value.length);
+const displayModal = ref(false);
+const selectedProduct = ref(null);
+const showModal = ref(false);
+const showCreatedModal = ref(false);
+const addToCart = (cartItem) => {
+  cart.value.push(cartItem);
+  showModal.value = false;
+  selectedProduct.value = null;
+  console.log("Item added to cart:", cartItem);
+  cartLength.value = cart.value.length; 
+  console.log(cartLength.value)
+};
+
+watchEffect(() => {
+  if (cart.value.length === 0) {
+  cartLength.value = 0;
+} else {
+  cartLength.value = cart.value.length;
+}
+
+});
+
 const tabs = ref([
   "All Categories",
   "Classic sub",
@@ -50,15 +75,12 @@ const tabs = ref([
   "Platters",
   "Toppings",
 ]);
-const displayModal = ref(false);
-const selectedProduct = ref(null);
-const showModal = ref(false);
-const showCreatedModal = ref(false);
 const open = (product) => {
   selectedProduct.value = product;
   showModal.value = true;
   console.log(product)
 };
+
 const initialProducts = [
   {
     name: "Classic beef burger",
@@ -205,6 +227,7 @@ const initialProducts = [
 const products = ref(initialProducts);
 const closemodal = () => {
   showModal.value = false;
+  selectedProduct.value = null;
 };
 const closedModal = () => {
   showCreatedModal.value = false;

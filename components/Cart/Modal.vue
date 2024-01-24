@@ -3,29 +3,34 @@
     <div class="full-cart-bg">
       <transition name="slide" appear>
         <div class="full-cart" v-if="showModal">
-            <CartList @closeCart="closeCart" :cart="carts"/>
-            <!-- <DeliveryInfo @clickButton="closeCart"/> -->
+          <div class="modal-content"
+          :class="{ 'slide-left' : step > prevStep, 'slide-right': step < prevStep }"
+          >
+            
+            <CartList @closeCart="closeCart" :cart="carts" v-if="step === 1" />
+       
+          <DeliveryInfo @clickButton="prevCart" @checkoutDone="checkoutDone"  v-if="step === 2" />
+          </div>
 
-
-            <div class="subtotal-container" v-if="cartLength">
-        <div class="subtotal" >
-          <p class="text-body-small-regular regular text-grey2">
-            Subtotal({{ numberOfMeals }} meals)
-          </p>
-          <p class="text-body-small-medium medium text-grey1">₦{{ TotalPrice }}</p>
-        </div>
-        <div class="btn">
-          <DynamicButton
-            class="bold text-button-standard standard"
-            @clickButton="checkout($event)"
-            buttonText="Continue"
-            :isLoading="isLoading"
-            :showText="true"
-            size="standard"
-            type="primary"
-          />
-        </div>
-      </div>
+          <div class="subtotal-container" v-if="cartLength && step === 1">
+            <div class="subtotal">
+              <p class="text-body-small-regular regular text-grey2">
+                Subtotal({{ numberOfMeals }} meals)
+              </p>
+              <p class="text-body-small-medium medium text-grey1">₦{{ TotalPrice }}</p>
+            </div>
+            <div class="btn">
+              <DynamicButton
+                class="bold text-button-standard standard"
+                @clickButton="checkout($event)"
+                buttonText="Continue"
+                :isLoading="isLoading"
+                :showText="true"
+                size="standard"
+                type="primary"
+              />
+            </div>
+          </div>
         </div>
       </transition>
       <transition name="fade" appear>
@@ -40,22 +45,40 @@
 </template>
 
 <script setup>
-import { logo, search, cart, cancel } from "../utils/svg";
+import { logo, search, cancel } from "../utils/svg";
 import { ref, onMounted, defineEmits, defineProps, computed } from "vue";
-const header = ref('My order')
+const TotalPrice = ref(3500);
+const numberOfMeals = ref(4);
+const isLoading = ref(false);
+const header = ref("My order");
 const props = defineProps({
   showModal: {
     type: Boolean,
     required: true,
   },
-  carts:{
+  carts: {
     type: Array,
     required: true,
-  }
+  },
 });
-const emit = defineEmits(["closeCart"]);
+const step = ref(1);
+const prevStep = ref(1);
+const emit = defineEmits(["closeCart", 'checkoutDone']);
 const closeCart = (e) => {
   emit("closeCart");
+};
+const checkoutDone = (e) => {
+  emit("checkoutDone");
+};
+const checkout = (e) => {
+  prevStep.value = step.value;
+  if (step.value === 1) {
+    step.value++;
+  }
+};
+const prevCart = (e) => {
+  prevStep.value = step.value;
+    step.value--
 };
 const cartLength = computed(() => props.carts.length > 0);
 </script>
@@ -100,14 +123,12 @@ const cartLength = computed(() => props.carts.length > 0);
   z-index: 1000;
 
   overflow-y: scroll;
-    -ms-overflow-style: none;  
-    scrollbar-width: none;  
-
-
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 .full-cart::-webkit-scrollbar {
-      display: none;
-  }
+  display: none;
+}
 .cart-bg {
   width: 100%;
   height: 100%;
@@ -185,21 +206,74 @@ header {
   padding: 16px 24px;
 }
 .subtotal-container {
-    position: sticky;
-    bottom: 0;
-    z-index: 98;
+
+
+    position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  background-color: #fff;
   display: flex;
   flex-direction: column;
   gap: 24px;
   align-items: center;
-  width: 100%;
-  background: white;
-
+  margin-top: auto;
+  border: 1px solid red;
 }
 .btn {
   width: 100%;
   padding: 16px 24px 32px 24px;
 }
+.modal-content{
+    height: 100vh;
+    width: 100%;
+    display: flex;
+}
+.fadeIn {
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+
+@keyframes slideLeft {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideRight {
+  from {
+    transform: translateX(-50%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+.slide-left {
+    height: 100vh;
+  animation: slideLeft 0.4s ease-in-out;
+}
+
+.slide-right {
+  animation: slideRight 0.4s ease-in-out;
+}
+
 @media screen and (max-width: 1000px) {
   .full-cart {
     display: flex;

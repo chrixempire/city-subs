@@ -8,16 +8,15 @@
                         <div class="logo-mobile-icon" v-html="mobileLogo"></div>
                     </div>
 
-                    <div class="cart" @click="navigateToNewPage($event)">
+                    <div class="cart" @click="openCartModal($event)">
                         <div class="circle">
-                            <div class="cart-icon" v-html="cart"></div>
+                            <div class="cart-icon" v-html="Cart"></div>
                         </div>
                         <div class="badge">
                             <p>{{ TotalCart }}</p>
                         </div>
                     </div>
                 </div>
-                <!-- <MobileHeader/> -->
                 <div class="search-input">
                     <div class="search-icon" v-html="search"></div>
                     <input class="input-search" placeholder="Search for products" />
@@ -28,18 +27,16 @@
 </template>
 
 <script setup>
+  import { cart } from "~/cart.js";
 import { ref, defineEmits } from 'vue'
-import { useRouter } from 'vue-router';
-import { mobileLogo, search, cart } from "../../utils/svg";
-const TotalCart = ref(2)
+import { mobileLogo, search, Cart } from "../../utils/svg";
+const TotalCart = computed(() => cart.value.length);
 
-
-
-const router = useRouter();
-const navigateToNewPage = (e) => {
-
-  router.push('/cart'); 
+const emit = defineEmits(["openCartModal"]);
+const openCartModal= (e) => {
+  emit("openCartModal");
 };
+
 </script>
 
 <style scoped>

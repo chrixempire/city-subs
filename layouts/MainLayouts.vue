@@ -2,8 +2,8 @@
     <div>
       <div class="top-details">
         <section class="top-detail">
-            <LayoutsTopDetails v-if="!isMobile" @openCart="openCartModal" class="desktop" :carts="carts" />
-        <LayoutsMobileTopDetails v-if="isMobile" @openCart="openCartModal" class="mobile" />
+            <LayoutsTopDetails v-if="!isMobile" @openCart="openCartModal" class="desktop" />
+        <LayoutsMobileTopDetails v-if="isMobile" @openCartModal="openMobileCart" class="mobile" />
         </section>
         <div class="filter-tabs">
           <div v-for="(tab, index) in tabs" :key="index" class="tab" @click="toggleTab(index)" :class="{ clicked: activeTab === index }">
@@ -21,19 +21,23 @@
   
   <script setup>
   import { ref, defineEmits, defineProps,  onMounted } from 'vue';
-  
+  import { cart } from "~/cart.js";
   const props = defineProps(['products', 'tabs','carts']);
   const activeTab = ref(0);
   const tabs = props.tabs;
-  const emit = defineEmits(['openCartModal', 'filterProducts']);
+  const emit = defineEmits(['openCartModal','openMobileCart', 'filterProducts']);
   
   const toggleTab = (index) => {
     activeTab.value = index;
     emit('filterProducts', tabs[index]);
   };
-  
+
   const openCartModal = () => {
       emit('openCartModal');
+      console.log('work', cart.value.length)
+  };
+  const openMobileCart = () => {
+      emit('openMobileCart');
   };
  
   const isMobile = ref(process.client ? window.innerWidth <= 450 : false);

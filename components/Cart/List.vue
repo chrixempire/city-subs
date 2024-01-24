@@ -60,5 +60,13 @@ const closeCart = (e) => {
   flex-direction: column;
   gap: 24px;
   justify-content: space-between;
+  margin-bottom: 0px;
+  
+}
+
+@media screen and (max-width: 450px) {
+  .cart-list {
+  margin-bottom: 100px;
+}
 }
 </style>

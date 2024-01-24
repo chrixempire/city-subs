@@ -51,12 +51,11 @@ header {
 @media screen and (max-width: 450px) {
   .cart-header {
     width: 100%;
-    height: 120px;
+    /* height: 120px; */
     background: var(--White);
     box-shadow: 0px 1px 3px 0px rgba(50, 50, 71, 0.1),
       0px 0px 1px 0px rgba(12, 26, 75, 0.2);
-    padding: 0px 10px;
-    padding-top: 30px;
+    padding: 50px 10px;
     display: flex;
     justify-items: center;
   }

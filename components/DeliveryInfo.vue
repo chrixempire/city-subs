@@ -1,10 +1,13 @@
 <template>
   <div class="container">
-    <CartModalHeader :header="header" @clickButton="clickButton">
-      <template v-slot:btn-icon>
-        <div class="cart-icon" v-html="leftArrow"></div>
-      </template>
-    </CartModalHeader>
+    <div class="info-header">
+      <CartModalHeader :header="header" @clickButton="clickButton">
+        <template v-slot:btn-icon>
+          <div class="cart-icon" v-html="leftArrow"></div>
+        </template>
+      </CartModalHeader>
+    </div>
+
     <div class="information-container">
       <div class="delievery-container">
         <div class="delivery-header">
@@ -127,10 +130,10 @@ const deliveryAddress = ref("");
 const ctaClicked = ref(false);
 const inValided = ref(true);
 
-const emit = defineEmits(['clickButton'])
+const emit = defineEmits(["clickButton",'checkoutDone']);
 const clickButton = (e) => {
-    emit('clickButton')
-}
+  emit("clickButton");
+};
 
 const updateValue = (e, name) => {
   if (name === "phone-number") {
@@ -159,12 +162,22 @@ const checkout = (e) => {
   ) {
     return;
   }
+  emit("checkoutDone");
 };
 </script>
 
 <style scoped>
-.container{
-    width: 100%;
+.info-header {
+  position: sticky;
+  top: 0;
+  z-index: 98;
+  width: 100%;
+  background: white;
+}
+.container {
+  width: 100%;
+  height: 100%;
+  background-color: white;
 }
 .information-container {
   margin: 20px;
@@ -211,6 +224,6 @@ const checkout = (e) => {
 }
 .btn {
   width: 100%;
-  padding: 16px 24px 32px 24px;
+  padding: 16px 0px 32px 0px;
 }
 </style>

@@ -11,7 +11,7 @@
                 </div>
                 <div class="cart" @click="triggerCart($event)">
                     <div class="circle">
-                        <div class="cart-icon" v-html="cart"></div>
+                        <div class="cart-icon" v-html="Cart"></div>
                     </div>
                     <div class="badge">
                         <p>{{ TotalCart }}</p>
@@ -23,10 +23,10 @@
 </template>
 
 <script setup>
+  import { cart } from "~/cart.js";
 import { ref, defineEmits } from 'vue'
-import { logo, search, cart } from "../../utils/svg";
-const props = defineProps(['carts']);
-const TotalCart = props?.carts
+import { logo, search, Cart } from "../../utils/svg";
+const TotalCart = computed(() => cart.value.length);
 const emit = defineEmits (['openCart'])
 const triggerCart = (e) => {
     emit('openCart')

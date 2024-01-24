@@ -6,34 +6,66 @@
       </template>
     </ModalWrapper>
   </div>
+  <div class="success-modal">
+    <ModalWrapper :showModal="showSuccessModal">
+      <template v-slot:content>
+        <SuccessModal @closeSuccesModal="closeSuccesModal($event)" />
+      </template>
+    </ModalWrapper>
+  </div>
   <div>
-    <MainLayouts @openCartModal="openModal($event)" :tabs="tabs" :products="products" @filterProducts="updateFilteredProducts" :carts="cartLength">
+    <MainLayouts
+      @openCartModal="openModal($event)"
+      @openMobileCart="openMobileCart($event)"
+      :tabs="tabs"
+      :products="products"
+      @filterProducts="updateFilteredProducts"
+      :carts="cartLength"
+    >
       <template v-slot:container>
-        <CartModal :carts="cart" :showModal="displayModal" @closeCart="closeModal($event)" />
-      <div class="overall-container">
-        <div class="products">
-          <div v-if="!products.length" class="web-loader">
-            <LoaderWeb />
-          </div>
-          <div class="product-content">
-
-            <div class="product-container">
-              <ProductCard v-for="(product, index) in products" :key="index" :data="product"
-                @clickedButton="open(product)" />
+        <CartModal
+          :carts="cart"
+          :showModal="displayModal"
+          @closeCart="closeModal($event)"
+          @checkoutDone="checkoutDone($event)"
+          
+        />
+        <CartMobileModal
+          :carts="cart"
+          :showMobileModal="showMobileModal"
+          @closeCart="closeMobileModal($event)"
+          @checkoutDone="checkoutDone($event)"
+        />
+        <div class="overall-container">
+          <div class="products">
+            <div v-if="!products.length" class="web-loader">
+              <LoaderWeb />
+            </div>
+            <div class="product-content">
+              <div class="product-container">
+                <ProductCard
+                  v-for="(product, index) in products"
+                  :key="index"
+                  :data="product"
+                  @clickedButton="open(product)"
+                />
+              </div>
+            </div>
+            <div class="modals">
+              <ModalWrapper :showModal="showModal">
+                <template v-slot:content>
+                  <div class="Addons-container" v-if="selectedProduct">
+                    <Addons
+                      :data="selectedProduct"
+                      @closed="closemodal"
+                      @addToCart="addToCart"
+                    />
+                  </div>
+                </template>
+              </ModalWrapper>
             </div>
           </div>
-          <div class="modals">
-            <ModalWrapper :showModal="showModal">
-              <template v-slot:content>
-                <div class="Addons-container" v-if="selectedProduct">
-                  <Addons :data="selectedProduct" @closed="closemodal"  @addToCart="addToCart" />
-                </div>
-              </template>
-            </ModalWrapper>
-          </div>
         </div>
-      </div>
-      
       </template>
     </MainLayouts>
   </div>
@@ -43,27 +75,34 @@
 import MainLayouts from "/layouts/MainLayouts.vue";
 import { ref, watchEffect } from "vue";
 import { cart } from "~/cart.js";
-const cartLength = ref(cart.value.length);
+const cartLength = computed(() => cart.value.length);
 const displayModal = ref(false);
 const selectedProduct = ref(null);
 const showModal = ref(false);
+const showSuccessModal = ref(false);
+const showMobileModal = ref(false);
 const showCreatedModal = ref(false);
 const addToCart = (cartItem) => {
   cart.value.push(cartItem);
   showModal.value = false;
   selectedProduct.value = null;
   console.log("Item added to cart:", cartItem);
-  cartLength.value = cart.value.length; 
-  console.log(cartLength.value)
-};
 
+  console.log(cart.value.length);
+};
+const checkoutDone = (e) => {
+  showSuccessModal.value = true
+}
+const closeSuccesModal = (e) => {
+  showSuccessModal.value = false
+  console.log('shit')
+}
 watchEffect(() => {
   if (cart.value.length === 0) {
-  cartLength.value = 0;
-} else {
-  cartLength.value = cart.value.length;
-}
-
+    cartLength.value = 0;
+  } else {
+    cartLength.value = cart.value.length;
+  }
 });
 
 const tabs = ref([
@@ -78,7 +117,7 @@ const tabs = ref([
 const open = (product) => {
   selectedProduct.value = product;
   showModal.value = true;
-  console.log(product)
+  console.log(product);
 };
 
 const initialProducts = [
@@ -97,18 +136,14 @@ const initialProducts = [
         { name: "Burger", price: 150 },
         { name: "Salad", price: 150 },
         { name: "Pasta", price: 100 },
-      ]
-    }
-
-
-
+      ],
+    },
   },
   {
     name: "French fries",
     snippet: "Special sub",
     price: 3500,
     image: "images/bacon.jpg",
-
   },
   {
     name: "Chicken and bacon",
@@ -125,8 +160,8 @@ const initialProducts = [
         { name: "Burger", price: 150 },
         { name: "Salad", price: 150 },
         { name: "Pasta", price: 100 },
-      ]
-    }
+      ],
+    },
   },
   {
     name: "Naija breakfast",
@@ -149,16 +184,14 @@ const initialProducts = [
         { name: "Burger", price: 150 },
         { name: "Salad", price: 150 },
         { name: "Pasta", price: 100 },
-      ]
-    }
-
+      ],
+    },
   },
   {
     name: "French fries",
     snippet: "Pasteries",
     price: 3500,
     image: "images/bacon.jpg",
-
   },
   {
     name: "Chicken and bacon",
@@ -175,8 +208,8 @@ const initialProducts = [
         { name: "Burger", price: 150 },
         { name: "Salad", price: 150 },
         { name: "Pasta", price: 100 },
-      ]
-    }
+      ],
+    },
   },
   {
     name: "Naija breakfast",
@@ -189,7 +222,6 @@ const initialProducts = [
     snippet: "Toppings",
     price: 3500,
     image: "images/chickenimage.jpg",
-
   },
   {
     name: "French fries",
@@ -206,9 +238,8 @@ const initialProducts = [
         { name: "Burger", price: 150 },
         { name: "Salad", price: 150 },
         { name: "Pasta", price: 100 },
-      ]
-    }
-
+      ],
+    },
   },
   {
     name: "Chicken and bacon",
@@ -222,7 +253,6 @@ const initialProducts = [
     price: 3500,
     image: "images/philly.jpg",
   },
-
 ];
 const products = ref(initialProducts);
 const closemodal = () => {
@@ -238,8 +268,14 @@ onMounted(() => {
 const openModal = (e) => {
   displayModal.value = true;
 };
+const openMobileCart = (e) => {
+  showMobileModal.value = true;
+};
 const closeModal = (e) => {
   displayModal.value = false;
+};
+const closeMobileModal = (e) => {
+  showMobileModal.value = false;
 };
 
 const updateFilteredProducts = (selectedTab) => {
@@ -270,9 +306,6 @@ const updateFilteredProducts = (selectedTab) => {
   margin-bottom: 80px;
 }
 
-
-
-
 .Addons-container {
   width: 100%;
 }
@@ -294,7 +327,6 @@ const updateFilteredProducts = (selectedTab) => {
   margin-bottom: 100px;
 }
 
-
 @media screen and (max-width: 450px) {
   .overall-container {
     display: flex;
@@ -304,8 +336,8 @@ const updateFilteredProducts = (selectedTab) => {
     gap: 40px;
     margin: 0px 16px 16px 16px;
   }
-  .product-content{
+  .product-content {
     margin-bottom: 100px;
   }
-
-}</style>
+}
+</style>

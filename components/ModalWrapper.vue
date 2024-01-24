@@ -36,7 +36,7 @@
     align-items: center;
     justify-content: center;
     animation: fadeInOut 0.5s ease-in-out;
-    z-index: 100;
+    z-index: 1001;
   }
   
   .modal-container {

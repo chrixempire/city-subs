@@ -7,30 +7,12 @@
           :class="{ 'slide-left' : step > prevStep, 'slide-right': step < prevStep }"
           >
             
-            <CartList @closeCart="closeCart" :cart="carts" v-if="step === 1" />
+            <CartList @closeCart="closeCart" @checkout="checkout" :cart="carts" v-if="step === 1" />
        
           <DeliveryInfo @clickButton="prevCart" @checkoutDone="checkoutDone"  v-if="step === 2" />
           </div>
 
-          <div class="subtotal-container" v-if="cartLength && step === 1">
-            <div class="subtotal">
-              <p class="text-body-small-regular regular text-grey2">
-                Subtotal({{ numberOfMeals }} meals)
-              </p>
-              <p class="text-body-small-medium medium text-grey1">₦{{ TotalPrice }}</p>
-            </div>
-            <div class="btn">
-              <DynamicButton
-                class="bold text-button-standard standard"
-                @clickButton="checkout($event)"
-                buttonText="Continue"
-                :isLoading="isLoading"
-                :showText="true"
-                size="standard"
-                type="primary"
-              />
-            </div>
-          </div>
+
         </div>
       </transition>
       <transition name="fade" appear>
@@ -74,7 +56,8 @@ const checkout = (e) => {
   prevStep.value = step.value;
   if (step.value === 1) {
     step.value++;
-  }
+  } 
+  
 };
 const prevCart = (e) => {
   prevStep.value = step.value;
@@ -195,35 +178,6 @@ header {
 .slide-enter-from,
 .slide-leave-to {
   transform: translateY(-50%) translateX(100vw);
-}
-.subtotal {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--foundation---yellow---y50);
-
-  padding: 16px 24px;
-}
-.subtotal-container {
-
-
-    position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  padding: 10px;
-  background-color: #fff;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  align-items: center;
-  margin-top: auto;
-  border: 1px solid red;
-}
-.btn {
-  width: 100%;
-  padding: 16px 24px 32px 24px;
 }
 .modal-content{
     height: 100vh;

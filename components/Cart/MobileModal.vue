@@ -60,7 +60,7 @@ const closeCart = (e) => {
   emit("closeCart");
 };
 const checkoutDone = () => {
-  emit("checkoutDone'");
+  emit("checkoutDone");
 };
 const checkout = (e) => {
   prevStep.value = step.value;

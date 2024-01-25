@@ -55,7 +55,9 @@ onMounted(() => {
       window.removeEventListener('resize', handleResize);
     };
   }
+  window.scrollTo(0, 0);
 });
+
   </script>
   
 <style scoped>

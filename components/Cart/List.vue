@@ -12,10 +12,51 @@
       
           <div class="cart-list" v-if="cart.length">
             <CartAdded v-for="(item, index) in cart" :key="index" :data="item"/>
+            <!-- <div class="subtotal-container">
+            <div class="subtotal">
+              <p class="text-body-small-regular regular text-grey2">
+                Subtotal({{ numberOfMeals }} meals)
+              </p>
+              <p class="text-body-small-medium medium text-grey1">₦{{ TotalPrice }}</p>
+            </div>
+            <div class="btn">
+              <DynamicButton
+                class="bold text-button-standard standard"
+                @clickButton="checkout($event)"
+                buttonText="Continue"
+                :isLoading="isLoading"
+                :showText="true"
+                size="standard"
+                type="primary"
+              />
+            </div>
+          </div> -->
           </div>
           <div class="cart-empty-state" v-else>
             <CartEmptyState class="empty-state" @placeOrder="closeCart($event)" />
           </div>
+         </div>
+         <div class="footer"  v-if="cart.length && !isMobile">
+          <div class="subtotal-container">
+            <div class="subtotal">
+              <p class="text-body-small-regular regular text-grey2">
+                Subtotal({{ numberOfMeals }} meals)
+              </p>
+              <p class="text-body-small-medium medium text-grey1">₦{{ TotalPrice }}</p>
+            </div>
+            <div class="btn">
+              <DynamicButton
+                class="bold text-button-standard standard"
+                @clickButton="checkout($event)"
+                buttonText="Continue"
+                :isLoading="isLoading"
+                :showText="true"
+                size="standard"
+                type="primary"
+              />
+            </div>
+          </div>
+
          </div>
     </div>
 </template>
@@ -23,13 +64,37 @@
 
 <script setup>
 import { logo, search,  cancel } from "../utils/svg";
-import { ref } from "vue";
+import { ref, defineEmits, defineProps,  onMounted } from 'vue';
+const TotalPrice = ref(3500);
+const numberOfMeals = ref(4);
+const isLoading = ref(false);
 const props = defineProps(['cart']);
 const header = ref('My order')
-const emit = defineEmits(["closeCart"]);
+const emit = defineEmits(["closeCart", 'checkout']);
+const checkout = (e) => {
+  emit("checkout");
+};
 const closeCart = (e) => {
   emit("closeCart");
 };
+
+
+const isMobile = ref(process.client ? window.innerWidth <= 450 : false);
+
+onMounted(() => {
+  if (process.client) {
+    const handleResize = () => {
+      isMobile.value = window.innerWidth <= 450;
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }
+});
 </script>
 
 <style scoped>
@@ -39,6 +104,14 @@ const closeCart = (e) => {
     z-index: 98;
     width: 100%;
     background: white;
+}
+.footer{
+  position: sticky;
+   bottom: 0;
+    z-index: 98;
+    width: 100%;
+    background: white;
+    margin-top: auto;
 }
 .cart-content {
   width: 100%;
@@ -63,7 +136,32 @@ const closeCart = (e) => {
   margin-bottom: 0px;
   
 }
+.subtotal {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--foundation---yellow---y50);
 
+  padding: 16px 24px;
+}
+.subtotal-container {
+  /* position: sticky;
+    bottom: 0;
+    z-index: 98; */
+    width: 100%;
+
+  padding: 10px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+}
+.btn {
+  width: 100%;
+  padding: 16px 24px 32px 24px;
+}
 @media screen and (max-width: 450px) {
   .cart-list {
   margin-bottom: 100px;

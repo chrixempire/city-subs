@@ -18,7 +18,7 @@
       <div class="success-btn">
         <DynamicButton
           class="bold text-button-standard standard"
-          @clickButton="checkout($event)"
+          @clickButton="closeSuccesModal($event)"
           buttonText="Buy more meals"
           :isLoading="isLoading"
           :showText="true"
@@ -52,9 +52,7 @@ const closeSuccesModal = (e) => {
   align-items: center;
   gap: 32px;
 }
-.success-btn {
-  /* width: 100px; */
-}
+
 .success-checkout {
   display: flex;
   flex-direction: column;
@@ -84,5 +82,11 @@ align-self: stretch;
   background: var(--grey---grey6);
   margin-left: auto;
   cursor: pointer;
+}
+
+@media screen and (max-width: 450px) {
+    .container{
+        width: 100%;
+    }
 }
 </style>

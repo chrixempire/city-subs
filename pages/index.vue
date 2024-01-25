@@ -95,6 +95,8 @@ const checkoutDone = (e) => {
 }
 const closeSuccesModal = (e) => {
   showSuccessModal.value = false
+  displayModal.value = false;
+  showMobileModal.value = false;
   console.log('shit')
 }
 watchEffect(() => {

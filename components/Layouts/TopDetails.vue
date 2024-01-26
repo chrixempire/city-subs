@@ -23,10 +23,13 @@
 </template>
 
 <script setup>
-  import { cart } from "~/cart.js";
 import { ref, defineEmits } from 'vue'
 import { logo, search, Cart } from "../../utils/svg";
-const TotalCart = computed(() => cart.value.length);
+
+import { useCartStore } from '~/stores/index.js';
+const cartItems = useCartStore().carts;
+const TotalCart = computed(() => useCartStore().cartLength);
+
 const emit = defineEmits (['openCart'])
 const triggerCart = (e) => {
     emit('openCart')

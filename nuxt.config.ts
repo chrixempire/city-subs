@@ -6,4 +6,17 @@ export default defineNuxtConfig({
     "@/assets/css/main.css",
     "@/assets/font/stylesheet.css", 
   ],
+  modules: [
+    [ '@pinia/nuxt', 
+    {
+      autoImports: [
+        'defineStore',
+        // 'acceptHMRUpdate'
+      ],
+    },
+  ],  
+],
+  imports: {
+    dirs: ['./stores']
+  }
 })

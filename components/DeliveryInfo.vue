@@ -93,9 +93,9 @@
       <div class="subtotal-container">
         <div class="subtotal">
           <p class="text-body-small-regular regular text-grey2">
-            Subtotal({{ numberOfMeals }} meals)
-          </p>
-          <p class="text-body-small-medium medium text-grey1">₦{{ TotalPrice }}</p>
+                Subtotal({{ totalQuantity }} {{ mealText }})
+              </p>
+          <p class="text-body-small-medium medium text-grey1">₦{{ totalPrice }}</p>
         </div>
         <div class="btn">
           <DynamicButton
@@ -115,8 +115,10 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import { useCartStore } from '~/stores/index.js';
 import { leftArrow } from "../utils/svg";
 const header = ref("Delivery information");
+const cartStore = useCartStore();
 const text = ref("");
 const number = ref();
 const email = ref("");
@@ -164,6 +166,22 @@ const checkout = (e) => {
   }
   emit("checkoutDone");
 };
+
+const totalQuantity = computed(() => {
+  cartStore.loadFromLocalStorage();
+  return cartStore.carts.reduce((total, item) => total + item.quantity, 0);
+});
+const totalPrice = computed(() => {
+  cartStore.loadFromLocalStorage();
+  return cartStore.carts.reduce((total, item) => total + item.price, 0);
+});
+const mealText = computed(() => {
+  if (totalQuantity.value === 1) {
+    return 'meal';
+  } else {
+    return 'meals';
+  }
+});
 </script>
 
 <style scoped>

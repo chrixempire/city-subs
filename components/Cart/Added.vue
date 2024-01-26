@@ -12,7 +12,7 @@
                 {{ data?.name }}({{ data?.selectedItem }})
               </p>
               <div class="delete-cart">
-                <button @click="deleteCart($event)">
+                <button @click="deleteCart(data?.id)">
                     <div class="delete-icon" v-html="deleteIcon"></div>
                 </button>
               </div>
@@ -36,7 +36,7 @@
         <div class="cart-addons">
           <div class="addons-details">
             <p class="text-body-small-medium medium">Your add ons</p>
-            <p class="text-body-small-medium medium">₦{{ data?.price }}</p>
+            <p class="text-body-small-medium medium">₦{{ data.price }}</p>
           </div>
           <div class="addons-added" v-for="(name, index) in data?.addon" :key="index">
             <p>
@@ -60,7 +60,7 @@
           </div>
           <div class="cartlist-action">
             <div class="delete-cart">
-              <button @click="deleteCart($event)">
+              <button @click="deleteCart(data?.id)">
                 <div class="delete-icon" v-html="deleteIcon"></div>
               </button>
             </div>
@@ -81,24 +81,72 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { editIcon } from "../utils/svg";
+import { useCartStore } from '~/stores/index.js';
 const props = defineProps(["data"]);
 const modalCounter = ref(false);
 const quantity = ref(props?.data?.quantity);
+
+
+const totalPerPriceUnit = computed(() => {
+  return props?.data?.price / props?.data?.quantity;
+});
+
+let price = props?.data?.productPrice;
+let pricePerUnit = props?.data?.totalPerUnit
+
+
+
+const cartStore = useCartStore();
+
+
+const updatePricesAndQuantity = () => {
+  const index = cartStore.carts.findIndex(item => item.id === props.data.id);
+
+  if (index !== -1) {
+    cartStore.carts[index].quantity = quantity.value;
+    cartStore.carts[index].price = cartStore.carts[index].totalPerUnit * quantity.value;
+    cartStore.carts[index].productPrice = cartStore.carts[index].pricePerUnit * quantity.value;
+    cartStore.saveToLocalStorage();
+  }
+};
+
+const totalQuantity = computed(() => {
+  cartStore.loadFromLocalStorage();
+  return cartStore.carts.reduce((total, item) => total + item.quantity, 0);
+});
+
 const increaseQuantity = () => {
   quantity.value += 1;
-  console.log(quantity.value);
+  updatePricesAndQuantity();
+  console.log(totalQuantity.value)
 };
+
 const decreaseQuantity = () => {
   if (quantity.value > 1) {
     quantity.value -= 1;
-    console.log(quantity.value);
+    updatePricesAndQuantity();
   }
 };
-const deleteCart = (e) => {
-  console.log("delete");
-};
+
+const deleteCart = (productId) => {
+  cartStore.loadFromLocalStorage();
+  const index = cartStore.carts.findIndex(item => item.id === productId);
+
+  if (index !== -1) {
+    cartStore.carts.splice(index, 1);
+    cartStore.saveToLocalStorage();
+
+    console.log("Product with ID:", productId, "deleted from cart.");
+  } else {
+    console.log("Product with ID:", productId, "not found in cart.");
+  }
+}
+
+
+
+
 </script>
 
 <style scoped>

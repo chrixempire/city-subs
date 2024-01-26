@@ -7,9 +7,10 @@
           :class="{ 'slide-left' : step > prevStep, 'slide-right': step < prevStep }"
           >
             
-            <CartList @closeCart="closeCart" @checkout="checkout" :cart="carts" v-if="step === 1" />
+            <CartList @closeCart="closeCart" @checkout="checkout" :cart="carts" v-if="step === 1 || stepped === 2" />
        
-          <DeliveryInfo @clickButton="prevCart" @checkoutDone="checkoutDone"  v-if="step === 2" />
+          <DeliveryInfo @clickButton="prevCart" @checkoutDone="checkoutDone"  v-if="step === 2 && stepped === 1" />
+       
           </div>
 
 
@@ -29,10 +30,11 @@
 <script setup>
 import { logo, search, cancel } from "../utils/svg";
 import { ref, onMounted, defineEmits, defineProps, computed } from "vue";
-const TotalPrice = ref(3500);
-const numberOfMeals = ref(4);
+import { useCartStore } from '~/stores/index.js';
+const cartItems = useCartStore().carts;
+const TotalCart = computed(() => useCartStore().cartLength);
 const isLoading = ref(false);
-const header = ref("My order");
+// const header = ref("My order");
 const props = defineProps({
   showModal: {
     type: Boolean,
@@ -42,8 +44,12 @@ const props = defineProps({
     type: Array,
     required: true,
   },
+  stepped:{
+    type:Number,
+    required: true
+  }
 });
-const step = ref(1);
+const step = ref(1)
 const prevStep = ref(1);
 const emit = defineEmits(["closeCart", 'checkoutDone']);
 const closeCart = (e) => {

@@ -24,6 +24,8 @@
           :showText="true"
           size="standard"
           type="primary"
+          :disabled="!selectedCard"
+         
         />
       </div>
     </div>

@@ -20,21 +20,23 @@
       :tabs="tabs"
       :products="products"
       @filterProducts="updateFilteredProducts"
-      :carts="cartLength"
+      
     >
       <template v-slot:container>
         <CartModal
-          :carts="cart"
+          :carts="cartItems"
           :showModal="displayModal"
           @closeCart="closeModal($event)"
           @checkoutDone="checkoutDone($event)"
+          :stepped="step"
           
         />
         <CartMobileModal
-          :carts="cart"
+          :carts="cartItems"
           :showMobileModal="showMobileModal"
           @closeCart="closeMobileModal($event)"
           @checkoutDone="checkoutDone($event)"
+          :stepMobile="stepp"
         />
         <div class="overall-container">
           <div class="products">
@@ -74,8 +76,15 @@
 <script setup>
 import MainLayouts from "/layouts/MainLayouts.vue";
 import { ref, watchEffect } from "vue";
-import { cart } from "~/cart.js";
-const cartLength = computed(() => cart.value.length);
+import { useCartStore } from '~/stores/index.js';
+const cartStore = useCartStore()
+// import { cart } from "~/cart.js";
+
+const cartItems =computed(() => useCartStore().carts);
+
+// const cartLength = computed(() => cartItems.value.length);
+const step = ref(1);
+const stepp = ref(1);
 const displayModal = ref(false);
 const selectedProduct = ref(null);
 const showModal = ref(false);
@@ -83,12 +92,11 @@ const showSuccessModal = ref(false);
 const showMobileModal = ref(false);
 const showCreatedModal = ref(false);
 const addToCart = (cartItem) => {
-  cart.value.push(cartItem);
+  useCartStore().addToCart(cartItem);
   showModal.value = false;
   selectedProduct.value = null;
   console.log("Item added to cart:", cartItem);
 
-  console.log(cart.value.length);
 };
 const checkoutDone = (e) => {
   showSuccessModal.value = true
@@ -97,15 +105,12 @@ const closeSuccesModal = (e) => {
   showSuccessModal.value = false
   displayModal.value = false;
   showMobileModal.value = false;
+  useCartStore().clearCart()
+  step.value = 2
+  stepp.value = 2
   console.log('shit')
 }
-watchEffect(() => {
-  if (cart.value.length === 0) {
-    cartLength.value = 0;
-  } else {
-    cartLength.value = cart.value.length;
-  }
-});
+
 
 const tabs = ref([
   "All Categories",
@@ -266,7 +271,12 @@ const closedModal = () => {
 };
 onMounted(() => {
   showCreatedModal.value = true;
+  cartStore.loadFromLocalStorage()
+  step.value = 1
+  stepp.value = 1
+  
 });
+
 const openModal = (e) => {
   displayModal.value = true;
 };

@@ -81,6 +81,7 @@
 
 <script setup>
 import { ref, defineProps, computed } from "vue";
+import { useCartStore } from '~/stores/index.js';
 import { cancel } from "../../utils/svg";
 const modalCounter= ref(true)
 const selectedCard = ref("");
@@ -96,7 +97,7 @@ const props = defineProps({
     required: true,
   },
 });
-const emit = defineEmits(["closed", "cartItem"]);
+const emit = defineEmits(["closed", "cartItem", 'addToCart']);
 const closed = (e) => {
   emit("closed");
 };
@@ -126,14 +127,27 @@ const handleCheckboxChange = ({ name, price, selected }) => {
   }
 };
 
+const totalAddonPrice = computed(()=>{
+  const addonPrice = totalPrice.value * quantity.value
+  return addonPrice
+})
+
+
 const buttonPrice = computed(() => {
   const basePrice = props?.data?.price * quantity.value;
-  return basePrice + totalPrice.value;
+  return basePrice + totalAddonPrice.value;
 });
 
 const basePrice = computed(() => {
   const productPrice = props?.data?.price * quantity.value;
   return productPrice;
+});
+
+const pricePerUnit = computed(() => {
+  return basePrice.value / quantity.value;
+});
+const totalPerUnit = computed(() => {
+  return buttonPrice.value / quantity.value;
 });
 
 const addToCart = () => {
@@ -153,8 +167,11 @@ const addToCart = () => {
     selectedPrice: totalPrice.value,
     selectedItem: selectedCard.value,
     quantity: quantity.value,
+    pricePerUnit: pricePerUnit.value,
+    totalPerUnit:totalPerUnit.value
   };
   emit("addToCart", cartItem);
+  
 }
 </script>
 

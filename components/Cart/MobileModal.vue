@@ -6,18 +6,18 @@
           class="modal-content"
           :class="{ 'slide-left': step > prevStep, 'slide-right': step < prevStep }"
         >
-          <div class="cart-list" v-if="step === 1">
+          <div class="cart-list" v-if="step === 1 || stepMobile === 2">
             <CartList @closeCart="closeCart" :cart="carts" />
           </div>
 
-          <DeliveryInfo @clickButton="prevCart" @checkoutDone="checkoutDone" v-if="step === 2" />
+          <DeliveryInfo @clickButton="prevCart" @checkoutDone="checkoutDone" v-if="step === 2 && stepMobile === 1" />
         </div>
         <div class="subtotal-container" v-if="cartLength && step === 1">
           <div class="subtotal">
             <p class="text-body-small-regular regular text-grey2">
-              Subtotal({{ numberOfMeals }} meals)
-            </p>
-            <p class="text-body-small-medium medium text-grey1">₦{{ TotalPrice }}</p>
+              Subtotal({{ totalQuantity }} {{ mealText }})
+              </p>
+            <p class="text-body-small-medium medium text-grey1">₦{{ totalPrice }}</p>
           </div>
           <div class="btn">
             <DynamicButton
@@ -39,6 +39,8 @@
 <script setup>
 import { logo, search, cancel } from "../utils/svg";
 import { ref,  defineEmits, defineProps, computed } from "vue";
+const cartStore = useCartStore();
+import { useCartStore } from '~/stores/index.js';
 const step = ref(1);
 const prevStep = ref(1);
 const TotalPrice = ref(3500);
@@ -54,6 +56,10 @@ const props = defineProps({
     type: Array,
     required: true,
   },
+  stepMobile:{
+    type:Number,
+    required: true
+  }
 });
 const emit = defineEmits(["closeCart",'checkoutDone']);
 const closeCart = (e) => {
@@ -73,6 +79,29 @@ const prevCart = (e) => {
     step.value--
 };
 const cartLength = computed(() => props.carts.length > 0);
+const mealText = computed(() => {
+  if (totalQuantity.value === 1) {
+    return 'meal';
+  } else {
+    return 'meals';
+  }
+});
+
+
+const totalQuantity = computed(() => {
+  // Load cart data from the store
+  cartStore.loadFromLocalStorage();
+
+  // Calculate the total quantity by summing up the quantities of all objects in the cart array
+  return cartStore.carts.reduce((total, item) => total + item.quantity, 0);
+});
+const totalPrice = computed(() => {
+  // Load cart data from the store
+  cartStore.loadFromLocalStorage();
+
+  // Calculate the total quantity by summing up the quantities of all objects in the cart array
+  return cartStore.carts.reduce((total, item) => total + item.price, 0);
+});
 </script>
 <style scoped>
 .modal {

@@ -40,9 +40,9 @@
           <div class="subtotal-container">
             <div class="subtotal">
               <p class="text-body-small-regular regular text-grey2">
-                Subtotal({{ numberOfMeals }} meals)
+                Subtotal({{ totalQuantity }} {{ mealText }})
               </p>
-              <p class="text-body-small-medium medium text-grey1">₦{{ TotalPrice }}</p>
+              <p class="text-body-small-medium medium text-grey1">₦{{ totalPrice }}</p>
             </div>
             <div class="btn">
               <DynamicButton
@@ -64,7 +64,9 @@
 
 <script setup>
 import { logo, search,  cancel } from "../utils/svg";
+import { useCartStore } from '~/stores/index.js';
 import { ref, defineEmits, defineProps,  onMounted } from 'vue';
+const cartStore = useCartStore();
 const TotalPrice = ref(3500);
 const numberOfMeals = ref(4);
 const isLoading = ref(false);
@@ -81,6 +83,22 @@ const closeCart = (e) => {
 
 const isMobile = ref(process.client ? window.innerWidth <= 450 : false);
 
+
+const totalQuantity = computed(() => {
+  cartStore.loadFromLocalStorage();
+  return cartStore.carts.reduce((total, item) => total + item.quantity, 0);
+});
+const totalPrice = computed(() => {
+  cartStore.loadFromLocalStorage();
+  return cartStore.carts.reduce((total, item) => total + item.price, 0);
+});
+const mealText = computed(() => {
+  if (totalQuantity.value === 1) {
+    return 'meal';
+  } else {
+    return 'meals';
+  }
+});
 onMounted(() => {
   if (process.client) {
     const handleResize = () => {
@@ -98,12 +116,12 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.cart-header{
+.cart-header {
   position: sticky;
-    top: 0;
-    z-index: 98;
-    width: 100%;
-    background: white;
+  top: 0;
+  z-index: 98;
+  width: 100%;
+  background: white;
 }
 .footer{
   position: sticky;
@@ -132,6 +150,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  height: 100%;
   justify-content: space-between;
   margin-bottom: 0px;
   

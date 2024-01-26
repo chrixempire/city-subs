@@ -66,5 +66,23 @@
   svg{
    position: absolute;
   }
+.squareChecked-icon{
 
+    animation: selectedAnimation 1s ease-in-out;
+  
+  
+}
+@keyframes selectedAnimation {
+    0% {
+      transform: scale(1);
+    }
+  
+    50% {
+      transform: scale(1.2);
+    }
+  
+    100% {
+      transform: scale(1);
+    }
+  }
   </style>

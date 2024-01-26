@@ -69,6 +69,13 @@ svg circle {
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
+
+
+}
+
+.select-content:hover{
+  background: var(--grey---grey6);
+  border-radius: 12px;
 }
 li {
   width: 100%;
@@ -81,5 +88,24 @@ li {
 .clicked {
   border: 2px solid #000;
   border-radius: 12px;
+  transition: all 0.3s ease-out;
 }
+.roundChecked-icon{
+    animation: selectedAnimation 1s ease-in-out;
+  
+  
+}
+@keyframes selectedAnimation {
+    0% {
+      transform: scale(1);
+    }
+  
+    50% {
+      transform: scale(1.2);
+    }
+  
+    100% {
+      transform: scale(1);
+    }
+  }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div class="food-item">
+    <div class="food-item" >
       <label :class="{ selectedLabel: selected }">
         <input
           :class="{ selected: selected }"
@@ -25,8 +25,11 @@
   const selected = ref(false);
   
   const handleCheckboxChange = () => {
+    
     emit('checkboxChange', { name, price, selected: selected.value });
+    
   };
+
   </script>
   
   <style scoped>
@@ -35,6 +38,7 @@
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
+    cursor: pointer;
   }
   
   .food-details {
@@ -61,16 +65,14 @@
    height: 24px;
    border-radius: 4px;
    border: 2px solid #BDC0CE;
+   cursor: pointer;
   }
 
   svg{
    position: absolute;
   }
 .squareChecked-icon{
-
     animation: selectedAnimation 1s ease-in-out;
-  
-  
 }
 @keyframes selectedAnimation {
     0% {

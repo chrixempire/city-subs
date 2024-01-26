@@ -52,6 +52,12 @@
           </div>
         </div>
 
+
+
+
+
+
+
         <div class="btn-ctn">
           <ProductCounterBtn
             :quantity="quantity"
@@ -217,7 +223,7 @@ button svg {
 }
 
 .selective p {
-  color: var(--GREY-GREY1);
+  color: var(--grey---grey1);
 }
 
 .added {

@@ -43,7 +43,7 @@
               {{ name }}
             </p>
           </div>
-          <div class="edit-addons">
+          <div class="edit-addons" @click="editAddons(cartItem)">
             <div class="edit-icon" v-html="editIcon"></div>
             <p class="text-body-small-medium medium text-grey1">Edit add ons</p>
           </div>
@@ -209,6 +209,7 @@ const deleteCart = (productId) => {
   display: flex;
   align-items: center;
   gap: 8px;
+  cursor: pointer;
 }
 
 .cartlist-image {

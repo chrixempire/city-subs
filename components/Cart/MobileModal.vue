@@ -15,7 +15,7 @@
         <div class="subtotal-container" v-if="cartLength && step === 1">
           <div class="subtotal">
             <p class="text-body-small-regular regular text-grey2">
-              Subtotal({{ totalQuantity }} {{ mealText }})
+              Subtotal({{ TotalCart }} {{ mealText }})
               </p>
             <p class="text-body-small-medium medium text-grey1">₦{{ totalPrice }}</p>
           </div>
@@ -78,9 +78,10 @@ const prevCart = (e) => {
   prevStep.value = step.value;
     step.value--
 };
+const TotalCart = computed(() => useCartStore().cartLength);
 const cartLength = computed(() => props.carts.length > 0);
 const mealText = computed(() => {
-  if (totalQuantity.value === 1) {
+  if (TotalCart.value === 1) {
     return 'meal';
   } else {
     return 'meals';

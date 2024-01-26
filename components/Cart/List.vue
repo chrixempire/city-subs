@@ -40,7 +40,7 @@
           <div class="subtotal-container">
             <div class="subtotal">
               <p class="text-body-small-regular regular text-grey2">
-                Subtotal({{ totalQuantity }} {{ mealText }})
+                Subtotal({{ TotalCart }} {{ mealText }})
               </p>
               <p class="text-body-small-medium medium text-grey1">₦{{ totalPrice }}</p>
             </div>
@@ -67,8 +67,7 @@ import { logo, search,  cancel } from "../utils/svg";
 import { useCartStore } from '~/stores/index.js';
 import { ref, defineEmits, defineProps,  onMounted } from 'vue';
 const cartStore = useCartStore();
-const TotalPrice = ref(3500);
-const numberOfMeals = ref(4);
+
 const isLoading = ref(false);
 const props = defineProps(['cart']);
 const header = ref('My order')
@@ -92,8 +91,9 @@ const totalPrice = computed(() => {
   cartStore.loadFromLocalStorage();
   return cartStore.carts.reduce((total, item) => total + item.price, 0);
 });
+const TotalCart = computed(() => useCartStore().cartLength);
 const mealText = computed(() => {
-  if (totalQuantity.value === 1) {
+  if (TotalCart.value === 1) {
     return 'meal';
   } else {
     return 'meals';

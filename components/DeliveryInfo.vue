@@ -93,7 +93,7 @@
       <div class="subtotal-container">
         <div class="subtotal">
           <p class="text-body-small-regular regular text-grey2">
-                Subtotal({{ totalQuantity }} {{ mealText }})
+                Subtotal({{ TotalCart }} {{ mealText }})
               </p>
           <p class="text-body-small-medium medium text-grey1">₦{{ totalPrice }}</p>
         </div>
@@ -122,8 +122,7 @@ const cartStore = useCartStore();
 const text = ref("");
 const number = ref();
 const email = ref("");
-const TotalPrice = ref(3500);
-const numberOfMeals = ref(4);
+
 const isLoading = ref(false);
 const fullName = ref("");
 const phoneNumber = ref();
@@ -137,6 +136,7 @@ const clickButton = (e) => {
   emit("clickButton");
 };
 
+const TotalCart = computed(() => useCartStore().cartLength);
 const updateValue = (e, name) => {
   if (name === "phone-number") {
     phoneNumber.value = e;
@@ -176,7 +176,7 @@ const totalPrice = computed(() => {
   return cartStore.carts.reduce((total, item) => total + item.price, 0);
 });
 const mealText = computed(() => {
-  if (totalQuantity.value === 1) {
+  if (TotalCart.value === 1) {
     return 'meal';
   } else {
     return 'meals';

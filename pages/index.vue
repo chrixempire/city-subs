@@ -54,6 +54,8 @@
                 />
               </div>
             </div>
+
+
             <div class="modals">
               <ModalWrapper :showModal="showModal">
                 <template v-slot:content>
@@ -67,6 +69,24 @@
                 </template>
               </ModalWrapper>
             </div>
+
+
+            <div class="modals">
+              <ModalWrapper :showModal="showEditModal">
+                <template v-slot:content>
+                  <div class="Addons-container" v-if="selectedProduct">
+                    <Addons
+                      :data="selectedProduct"
+                      @closed="closemodal"
+                      @addToCart="addToCart"
+                    />
+                  </div>
+                </template>
+              </ModalWrapper>
+            </div>
+
+
+
           </div>
         </div>
       </template>
@@ -89,6 +109,7 @@ const stepp = ref(1);
 const displayModal = ref(false);
 const selectedProduct = ref(null);
 const showModal = ref(false);
+const showEditModal = ref(false);
 const showSuccessModal = ref(false);
 const showMobileModal = ref(false);
 const showCreatedModal = ref(false);

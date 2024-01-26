@@ -18,7 +18,7 @@
         </div>
         <div class="search-input">
           <div class="search-icon" v-html="search"></div>
-          <input class="input-search" placeholder="Search for products" />
+          <input class="input-search" placeholder="Search for products" v-model="searchQuery" @input="searchProducts" />
         </div>
       </section>
     </div>
@@ -34,7 +34,13 @@ const cartItems = useCartStore().carts;
 
 const TotalCart = computed(() => useCartStore().cartLength);
 
-const emit = defineEmits(["openCartModal"]);
+const emit = defineEmits(["openCartModal",'search']);
+const searchQuery = ref('');
+
+
+const searchProducts = () => {
+  emit('search', searchQuery.value);
+};
 const openCartModal = (e) => {
   emit("openCartModal");
 };

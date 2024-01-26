@@ -2,10 +2,15 @@
   <div>
     <div class="top-details">
       <section class="top-detail">
-        <LayoutsTopDetails v-if="!isMobile" @openCart="openCartModal" class="desktop" />
+        <LayoutsTopDetails v-if="!isMobile"
+         @openCart="openCartModal" 
+         class="desktop" 
+         @search="handleSearch" 
+         />
         <LayoutsMobileTopDetails
           v-if="isMobile"
           @openCartModal="openMobileCart"
+          @search="handleSearch" 
           class="mobile"
         />
       </section>
@@ -34,7 +39,14 @@ import { ref, defineEmits, defineProps, onMounted } from "vue";
 const props = defineProps(["products", "tabs"]);
 const activeTab = ref(0);
 const tabs = props.tabs;
-const emit = defineEmits(["openCartModal", "openMobileCart", "filterProducts"]);
+const emit = defineEmits(["openCartModal", "openMobileCart", "filterProducts", "filteredProducts"]);
+
+const searchQuery = ref("");
+
+const handleSearch = (query) => {
+  searchQuery.value = query;
+  emit("filteredProducts", query);
+};
 
 const toggleTab = (index) => {
   activeTab.value = index;

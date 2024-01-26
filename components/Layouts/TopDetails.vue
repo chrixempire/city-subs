@@ -7,7 +7,7 @@
                 </div>
                 <div class="search-input">
                     <div class="search-icon" v-html="search"></div>
-                    <input class="input-search" placeholder="Search for products" />
+                    <input class="input-search" placeholder="Search for products" v-model="searchQuery" @input="searchProducts" />
                 </div>
                 <div class="cart" @click="triggerCart($event)">
                     <div class="circle">
@@ -30,7 +30,16 @@ import { useCartStore } from '~/stores/index.js';
 const cartItems = useCartStore().carts;
 const TotalCart = computed(() => useCartStore().cartLength);
 
-const emit = defineEmits (['openCart'])
+
+const searchQuery = ref('');
+
+
+
+const emit = defineEmits (['openCart','search'])
+
+const searchProducts = () => {
+  emit('search', searchQuery.value);
+};
 const triggerCart = (e) => {
     emit('openCart')
 }

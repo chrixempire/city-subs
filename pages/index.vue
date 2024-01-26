@@ -20,6 +20,7 @@
       :tabs="tabs"
       :products="products"
       @filterProducts="updateFilteredProducts"
+      @filteredProducts="updateSearchedProducts"
       
     >
       <template v-slot:container>
@@ -290,13 +291,56 @@ const closeMobileModal = (e) => {
   showMobileModal.value = false;
 };
 
-const updateFilteredProducts = (selectedTab) => {
-  if (selectedTab === "All Categories") {
-    products.value = initialProducts;
-  } else {
-    products.value = initialProducts.filter((product) => product.snippet === selectedTab);
+// const updateFilteredProducts = (selectedTab, searchQuery) => {
+//   if (selectedTab === "All Categories") {
+//     products.value = initialProducts;
+//   } else {
+//     products.value = initialProducts.filter((product) => product.snippet === selectedTab);
+//   }
+// };
+
+
+
+
+
+const updateFilteredProducts = (selectedTab, searchQuery) => {
+  let filtered = initialProducts;
+
+  if (selectedTab !== 'All Categories') {
+    filtered = initialProducts.filter(product => product.snippet === selectedTab);
   }
+
+  if (searchQuery) {
+    const query = searchQuery.toLowerCase().trim();
+    filtered = filtered.filter(product =>
+      product.name.toLowerCase().includes(query) ||
+      (product.Addons && product.Addons.selections.some(selection => selection.label.toLowerCase().includes(query)))
+    );
+  }
+
+  products.value = filtered;
 };
+
+const updateSearchedProducts = (searchQuery) => {
+  let filtered = initialProducts;
+
+  if (searchQuery) {
+    const query = searchQuery.toLowerCase().trim();
+    filtered = filtered.filter(product =>
+      product.name.toLowerCase().includes(query) ||
+      product.snippet.toLowerCase().includes(query) ||
+      product.price.toString().includes(query) || // Convert price to string for search
+      (product.Addons && product.Addons.selections.some(selection => selection.label.toLowerCase().includes(query))) ||
+      (product.Addons && product.Addons.foods.some(food => 
+        food.name.toLowerCase().includes(query) ||
+        food.price.toString().includes(query) // Convert food price to string for search
+      ))
+    );
+  }
+
+  products.value = filtered;
+};
+
 </script>
 
 <style scoped>

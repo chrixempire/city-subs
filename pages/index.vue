@@ -30,6 +30,7 @@
           @closeCart="closeModal($event)"
           @checkoutDone="checkoutDone($event)"
           :stepped="step"
+          @openEditModal="openEditModal"
           
         />
         <CartMobileModal
@@ -70,15 +71,13 @@
               </ModalWrapper>
             </div>
 
-
             <div class="modals">
               <ModalWrapper :showModal="showEditModal">
                 <template v-slot:content>
-                  <div class="Addons-container" v-if="selectedProduct">
-                    <Addons
-                      :data="selectedProduct"
-                      @closed="closemodal"
-                      @addToCart="addToCart"
+                  <div class="Addons-container" >
+                    <EditModal
+                      :formData="selectedCartItem"
+                
                     />
                   </div>
                 </template>
@@ -87,10 +86,12 @@
 
 
 
+
           </div>
         </div>
       </template>
     </MainLayouts>
+    <New :data="selectedProduct"/>
   </div>
 </template>
 
@@ -98,7 +99,8 @@
 import MainLayouts from "/layouts/MainLayouts.vue";
 import { ref, watchEffect } from "vue";
 import { useCartStore } from '~/stores/index.js';
-const cartStore = useCartStore()
+const cartStore = useCartStore();
+
 // import { cart } from "~/cart.js";
 
 const cartItems =computed(() => useCartStore().carts);
@@ -113,6 +115,8 @@ const showEditModal = ref(false);
 const showSuccessModal = ref(false);
 const showMobileModal = ref(false);
 const showCreatedModal = ref(false);
+
+const selectedCartItem = ref(null);
 const addToCart = (cartItem) => {
   useCartStore().addToCart(cartItem);
   showModal.value = false;
@@ -120,6 +124,11 @@ const addToCart = (cartItem) => {
   console.log("Item added to cart:", cartItem);
 
 };
+const openEditModal = (data) => {
+  selectedCartItem.value = data
+  showEditModal.value = true
+  console.log(data)
+}
 const checkoutDone = (e) => {
   showSuccessModal.value = true
 }

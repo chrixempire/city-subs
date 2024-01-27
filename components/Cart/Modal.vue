@@ -3,17 +3,24 @@
     <div class="full-cart-bg">
       <transition name="slide" appear>
         <div class="full-cart" v-if="showModal">
-          <div class="modal-content"
-          :class="{ 'slide-left' : step > prevStep, 'slide-right': step < prevStep }"
+          <div
+            class="modal-content"
+            :class="{ 'slide-left': step > prevStep, 'slide-right': step < prevStep }"
           >
-            
-            <CartList @closeCart="closeCart" @checkout="checkout" :cart="carts" v-if="step === 1 || stepped === 2" />
-       
-          <DeliveryInfo @clickButton="prevCart" @checkoutDone="checkoutDone"  v-if="step === 2 && stepped === 1" />
-       
+            <CartList
+              @closeCart="closeCart"
+              @checkout="checkout"
+              @openEditModal="openEditModal"
+              :cart="carts"
+              v-if="step === 1 || stepped === 2"
+            />
+
+            <DeliveryInfo
+              @clickButton="prevCart"
+              @checkoutDone="checkoutDone"
+              v-if="step === 2 && stepped === 1"
+            />
           </div>
-
-
         </div>
       </transition>
       <transition name="fade" appear>
@@ -30,7 +37,7 @@
 <script setup>
 import { logo, search, cancel } from "../utils/svg";
 import { ref, onMounted, defineEmits, defineProps, computed } from "vue";
-import { useCartStore } from '~/stores/index.js';
+import { useCartStore } from "~/stores/index.js";
 const cartItems = useCartStore().carts;
 const TotalCart = computed(() => useCartStore().cartLength);
 const isLoading = ref(false);
@@ -44,14 +51,18 @@ const props = defineProps({
     type: Array,
     required: true,
   },
-  stepped:{
-    type:Number,
-    required: true
-  }
+  stepped: {
+    type: Number,
+    required: true,
+  },
 });
-const step = ref(1)
+const step = ref(1);
 const prevStep = ref(1);
-const emit = defineEmits(["closeCart", 'checkoutDone']);
+const emit = defineEmits(["closeCart", "checkoutDone", "openEditModal"]);
+
+const openEditModal = (data) => {
+  emit("openEditModal", data);
+};
 const closeCart = (e) => {
   emit("closeCart");
 };
@@ -62,12 +73,11 @@ const checkout = (e) => {
   prevStep.value = step.value;
   if (step.value === 1) {
     step.value++;
-  } 
-  
+  }
 };
 const prevCart = (e) => {
   prevStep.value = step.value;
-    step.value--
+  step.value--;
 };
 const cartLength = computed(() => props.carts.length > 0);
 </script>
@@ -185,10 +195,10 @@ header {
 .slide-leave-to {
   transform: translateY(-50%) translateX(100vw);
 }
-.modal-content{
-    height: 100vh;
-    width: 100%;
-    display: flex;
+.modal-content {
+  height: 100vh;
+  width: 100%;
+  display: flex;
 }
 .fadeIn {
   animation: fadeIn 1s ease-in-out;
@@ -203,7 +213,6 @@ header {
     opacity: 1;
   }
 }
-
 
 @keyframes slideLeft {
   from {
@@ -226,7 +235,7 @@ header {
 }
 
 .slide-left {
-    height: 100vh;
+  height: 100vh;
   animation: slideLeft 0.4s ease-in-out;
 }
 

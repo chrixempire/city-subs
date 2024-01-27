@@ -10,6 +10,8 @@ const openModal = () => {
 const closeModal = () => {
   showModal.value = false;
 };
+
+
 </script>
 
 <template>
@@ -22,6 +24,8 @@ const closeModal = () => {
       </div>
     </transition>
   </div>
+  <New />
+
 </template>
 
 <style scoped>

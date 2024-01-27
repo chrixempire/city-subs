@@ -45,18 +45,13 @@
                   :key="food?.name"
                   :name="food?.name"
                   :price="food?.price"
-                  @checkboxChange="handleCheckboxChange"
+                  :selectedFoods="selectedFoods"
+                  @toggleSelection="toggleSelection"
                 />
               </div>
             </div>
           </div>
         </div>
-
-
-
-
-
-
 
         <div class="btn-ctn">
           <ProductCounterBtn
@@ -82,16 +77,18 @@
         </div>
       </div>
     </div>
+
   </div>
 </template>
 
 <script setup>
 import { ref, defineProps, computed } from "vue";
-import { useCartStore } from '~/stores/index.js';
+import { useCartStore } from "~/stores/index.js";
 import { cancel } from "../../utils/svg";
-const modalCounter= ref(true)
+const modalCounter = ref(true);
 const selectedCard = ref("");
 const isLoading = ref(false);
+
 const slotNeeded = ref(true);
 const selectItem = (value) => {
   selectedCard.value = value;
@@ -103,10 +100,19 @@ const props = defineProps({
     required: true,
   },
 });
-const emit = defineEmits(["closed", "cartItem", 'addToCart']);
+const emit = defineEmits(["closed", "cartItem", "addToCart"]);
 const closed = (e) => {
   emit("closed");
 };
+
+
+
+
+
+
+
+
+
 
 let selectedFoods = ref([]);
 
@@ -123,21 +129,22 @@ const decreaseQuantity = () => {
 };
 
 const totalPrice = ref(0);
-const handleCheckboxChange = ({ name, price, selected }) => {
-  if (selected) {
-    selectedFoods.value.push({ name, price });
-    totalPrice.value += price;
+const toggleSelection = (food) => {
+  const index = selectedFoods.value.findIndex(item => item.name === food.name);
+
+  if (index === -1) {
+    selectedFoods.value.push(food);
+    totalPrice.value += food.price;
   } else {
-    selectedFoods.value = selectedFoods.value.filter(item => item.name !== name);
-    totalPrice.value -= price;
+    selectedFoods.value.splice(index, 1);
+    totalPrice.value -= food.price;
   }
 };
 
-const totalAddonPrice = computed(()=>{
-  const addonPrice = totalPrice.value * quantity.value
-  return addonPrice
-})
-
+const totalAddonPrice = computed(() => {
+  const addonPrice = totalPrice.value * quantity.value;
+  return addonPrice;
+});
 
 const buttonPrice = computed(() => {
   const basePrice = props?.data?.price * quantity.value;
@@ -174,11 +181,10 @@ const addToCart = () => {
     selectedItem: selectedCard.value,
     quantity: quantity.value,
     pricePerUnit: pricePerUnit.value,
-    totalPerUnit:totalPerUnit.value
+    totalPerUnit: totalPerUnit.value,
   };
   emit("addToCart", cartItem);
-  
-}
+};
 </script>
 
 <style scoped>

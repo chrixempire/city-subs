@@ -32,7 +32,7 @@ import { plus, minus } from "../../utils/svg";
 const props = defineProps({
   quantity: {
     type: Number,
-    required: true,
+    default: 0,
   },
   modalCounter: {
     type: Boolean,

@@ -43,7 +43,7 @@
               {{ name }}
             </p>
           </div>
-          <div class="edit-addons" @click="editAddons(cartItem)">
+          <div class="edit-addons" @click="openEditModal(data)">
             <div class="edit-icon" v-html="editIcon"></div>
             <p class="text-body-small-medium medium text-grey1">Edit add ons</p>
           </div>
@@ -77,6 +77,9 @@
         </div>
       </div>
     </div>
+
+
+
   </div>
 </template>
 
@@ -86,7 +89,19 @@ import { editIcon } from "../utils/svg";
 import { useCartStore } from '~/stores/index.js';
 const props = defineProps(["data"]);
 const modalCounter = ref(false);
+
 const quantity = ref(props?.data?.quantity);
+
+
+
+
+const emit = defineEmits(["openEditModal"]);
+
+const openEditModal = (data) => {
+  emit('openEditModal', data)
+};
+
+
 
 
 const totalPerPriceUnit = computed(() => {

@@ -99,6 +99,7 @@ const emit = defineEmits(["openEditModal"]);
 
 const openEditModal = (data) => {
   emit('openEditModal', data)
+
 };
 
 

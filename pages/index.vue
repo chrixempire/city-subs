@@ -117,19 +117,23 @@ const showMobileModal = ref(false);
 const showCreatedModal = ref(false);
 
 const selectedCartItem = ref(null);
-const addToCart = (cartItem) => {
+const addToCart = (cartItem, formData) => {
   useCartStore().addToCart(cartItem);
   showModal.value = false;
   selectedProduct.value = null;
   console.log("Item added to cart:", cartItem);
+  console.log("formDat",formData);
 
 };
 const openEditModal = (data) => {
-  selectedCartItem.value = data
-  showEditModal.value = true
+  // selectedCartItem.value = data
+  // showEditModal.value = true
+  
   console.log(data)
 }
 const checkoutDone = (e) => {
+  displayModal.value = false;
+  showMobileModal.value = false;
   showSuccessModal.value = true
 }
 const closeSuccesModal = (e) => {
@@ -139,7 +143,6 @@ const closeSuccesModal = (e) => {
   useCartStore().clearCart()
   step.value = 2
   stepp.value = 2
-  console.log('shit')
 }
 
 

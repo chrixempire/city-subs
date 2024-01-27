@@ -182,8 +182,20 @@ const addToCart = () => {
     quantity: quantity.value,
     pricePerUnit: pricePerUnit.value,
     totalPerUnit: totalPerUnit.value,
+  }
+  const formData = {
+    selectedCard: selectedCard.value,
+    selectedFoods: selectedFoods.value,
+    quantity: quantity.value,
+    totalPrice: totalPrice.value,
+    buttonPrice: buttonPrice.value,
+    basePrice: basePrice.value,
+    pricePerUnit: pricePerUnit.value,
+    totalPerUnit: totalPerUnit.value,
+    name: props.data.name,
+    image: props.data.image,
   };
-  emit("addToCart", cartItem);
+  emit("addToCart", cartItem, formData);
 };
 </script>
 

@@ -76,14 +76,15 @@
                 <template v-slot:content>
                   <div class="Addons-container" >
                     <EditModal
-                      :formData="selectedCartItem"
-                
+             
+                      :data="selectedCartItem"
+                      :formData="form"
+                      @closeEditModal="closeEditModal"
                     />
                   </div>
                 </template>
               </ModalWrapper>
             </div>
-
 
 
 
@@ -116,21 +117,40 @@ const showSuccessModal = ref(false);
 const showMobileModal = ref(false);
 const showCreatedModal = ref(false);
 
+
+
+
+
+let form = ref(null)
 const selectedCartItem = ref(null);
-const addToCart = (cartItem, formData) => {
+
+const openEditModal = (data) => {
+  selectedCartItem.value = data
+  showEditModal.value = true
+  console.log("data,", data)
+  console.log('form',form)
+}
+const closeEditModal = () => {
+  showEditModal.value = false
+  selectedCartItem.value = null;
+
+}
+
+const closemodal = () => {
+  showModal.value = false;
+  selectedProduct.value = null;
+};
+
+const addToCart = (cartItem) => {
   useCartStore().addToCart(cartItem);
   showModal.value = false;
   selectedProduct.value = null;
   console.log("Item added to cart:", cartItem);
-  console.log("formDat",formData);
+ 
 
 };
-const openEditModal = (data) => {
-  // selectedCartItem.value = data
-  // showEditModal.value = true
-  
-  console.log(data)
-}
+
+
 const checkoutDone = (e) => {
   displayModal.value = false;
   showMobileModal.value = false;
@@ -296,10 +316,7 @@ const initialProducts = [
   },
 ];
 const products = ref(initialProducts);
-const closemodal = () => {
-  showModal.value = false;
-  selectedProduct.value = null;
-};
+
 const closedModal = () => {
   showCreatedModal.value = false;
 };

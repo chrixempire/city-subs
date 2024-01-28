@@ -1,111 +1,78 @@
 <template>
   <div class="container">
     <div class="modal-content">
-      <!-- Close button -->
-      <div class="cancel-btn">
-        <div class="cancel" @click="closed">
-          <div class="minus-icon" v-html="cancel"></div>
-        </div>
-      </div>
-
-      <!-- Product Image -->
-      <div class="image-cont">
-        <DynamicImage :imageUrl="formData?.image" :isModalView="true" />
-      </div>
-
-      <!-- Product Details -->
-      <div class="product-details">
-        <!-- Product Details Component -->
-        <template v-if="formData">
-          <ProductDetails class="details" :product="formData" />
-        </template>
-
-        <!-- Addons -->
-        <div class="Addons" v-if="formData?.addons">
-          <!-- Select Types -->
-          <div class="selective">
-            <p class="text-body-small-medium medium">SELECT TYPE</p>
-            <div class="flexed-select">
-              <div
-                class="select-type"
-                v-for="(select, index) in formData?.selectedItem"
-                :key="index"
+      <div class="Addons">
+        <div class="selective">
+          <p class="text-body-small-medium medium">SELECT TYPE</p>
+          <div class="flexed-select">
+            <div
+              class="select-type"
+              v-for="(select, index) in data?.AddonSelections"
+              :key="index"
+            >
+              <DynamicSelect
+                :data="select"
+                :selectedItem="selectedCard"
+                @selectItem="selectItem"
+                :slotNeeded="slotNeeded"
               >
-                <!-- Select Component -->
-                <DynamicSelect
-                  :data="select"
-                  :selectedItem="selectedCard"
-                  @selectItem="selectItem"
-                  :slotNeeded="slotNeeded"
-                >
-                  <template v-slot:image>
-                    <DynamicImage :imageUrl="select?.image" :isModalView="true" />
-                  </template>
-                </DynamicSelect>
-              </div>
-            </div>
-          </div>
-
-          <!-- Addons Selection -->
-          <div class="addMore">
-            <div class="added">
-              <p class="text-body-small-medium medium">ADD ADD-ONS</p>
-              <div class="multiChoice">
-                <!-- SelectAddons Component -->
-                <SelectAddons
-                  v-for="food in formData?.addons"
-                  :key="food?.name"
-                  :name="food?.name"
-                  :price="food?.price"
-                  :selectedFoods="selectedFoods"
-                  @toggleSelection="toggleSelection"
-                />
-              </div>
+                <template v-slot:image>
+                  <DynamicImage :imageUrl="select?.image" :isModalView="true" />
+                </template>
+              </DynamicSelect>
             </div>
           </div>
         </div>
-
-        <!-- Quantity Counter and Add Button -->
-        <div class="btn-ctn">
-          <ProductCounterBtn
-            :quantity="quantity"
-            :modalCounter="modalCounter"
-            @increaseQuantity="increaseQuantity"
-            @decreaseQuantity="decreaseQuantity"
-            class="count"
-          />
-          <DynamicButton
-            class="bolder text-button-standard standard"
-            @clickButton="addToCart"
-            buttonText="Add"
-            :isLoading="isLoading"
-            :showText="true"
-            size="standard"
-            type="primary"
-          >
-            <template v-slot:price>
-              <p class="text-body-large-bold bolder">(₦{{ buttonPrice }})</p>
-            </template>
-          </DynamicButton>
+        <div class="addMore">
+          <div class="added">
+            <p class="text-body-small-medium medium">ADD ADD-ONS</p>
+            <div class="multiChoice">
+              <SelectAddons
+                v-for="food in data?.AddonFoods"
+                :key="food?.name"
+                :name="food?.name"
+                :price="food?.price"
+                :selectedFoods="selectedFoods"
+                @toggleSelection="toggleSelection"
+              />
+            </div>
+          </div>
         </div>
+        <div class="btn">
+        <DynamicButton
+        class="bold text-button-standard standard"
+          @clickButton="addAddons()"
+          buttonText="Add-ons"
+          :isLoading="isLoading"
+          :showText="true"
+          size="standard"
+          type="primary"
+         
+        />
+      </div>
       </div>
     </div>
   </div>
 </template>
 
+
 <script setup>
-import { ref, defineProps, defineEmits, computed } from "vue";
+import { ref, defineProps, defineEmits, onMounted, watch } from "vue";
 import { cancel } from "../../utils/svg";
 import { useCartStore } from "~/stores/index.js";
 
 const props = defineProps({
   formData: {
     type: Object,
-    default: null, 
+    default: null,
+  },
+  data: {
+    type: Object,
+    default: null,
   },
 });
 
-const emit = defineEmits(["closed", "cartItem", "addToCart"]);
+const emit = defineEmits(["closeEditModal" ]);
 
 const modalCounter = ref(true);
 const selectedCard = ref("");
@@ -113,30 +80,8 @@ const isLoading = ref(false);
 const slotNeeded = ref(true);
 const selectedFoods = ref([]);
 
+const totalPrice = ref(0);
 
-const populateEditData = () => {
-  if (props.formData) {
-    selectedCard.value = props?.formData.selectedItem;
-    selectedFoods.value = props?.formData.addons;
-  }
-};
-const selectItem = (value) => {
-  selectedCard.value = value;
-  console.log(value);
-};
-const quantity = ref(props?.formData?.quantity);
-
-const increaseQuantity = () => {
-  quantity.value += 1;
-};
-
-const decreaseQuantity = () => {
-  if (quantity.value > 1) {
-    quantity.value -= 1;
-  }
-};
-
-const totalPrice = ref(props?.formData?.selectedPrice);
 
 const toggleSelection = (food) => {
   const index = selectedFoods.value.findIndex((item) => item.name === food.name);
@@ -145,57 +90,62 @@ const toggleSelection = (food) => {
     selectedFoods.value.push(food);
     totalPrice.value += food.price;
   } else {
-    selectedFoods.value.splice(index, 1);
-    totalPrice.value -= food.price;
   }
 };
 
-const totalAddonPrice = computed(() => totalPrice.value * quantity.value);
 
-const buttonPrice = computed(() => {
-  const basePrice = props?.formData?.productPrice * quantity.value;
-  return basePrice + totalAddonPrice.value;
+
+const cartStore = useCartStore();
+
+const addAddons = () => {
+  const index = cartStore.carts.findIndex(item => item.id === props.data.id);
+  if (index !== -1) {
+    cartStore.carts[index].selectedItem = selectedCard.value;
+    if (selectedFoods.value.length > 0) {
+      cartStore.carts[index].addon = selectedFoods.value.map((addon) => addon.name);
+
+      cartStore.carts[index].selectedPrice = totalPrice.value;
+      cartStore.carts[index].TotalselectedPrice = totalPrice.value * cartStore.carts[index].quantity;
+      cartStore.carts[index].price = (cartStore.carts[index].pricePerUnit * cartStore.carts[index].quantity) + cartStore.carts[index].TotalselectedPrice;
+      cartStore.carts[index].totalPerUnit = cartStore.carts[index].price / cartStore.carts[index].quantity;
+    }
+
+    cartStore.saveToLocalStorage();
+  }
+
+ 
+  if (selectedFoods.value.length > 0) {
+    selectedFoods.value = [];
+    totalPrice.value = 0;
+  }
+
+  emit('closeEditModal');
+}
+
+
+
+const selectItem = (value) => {
+  selectedCard.value = value;
+};
+
+
+onMounted(() => {
+  if (props.data) {
+    selectedCard.value = props.data.selectedItem;
+  }
+
+});
+watch(() => props.data, (newValue, oldValue) => {
+  if (newValue) {
+    selectedCard.value = newValue.selectedItem;
+  }
 });
 
-const pricePerUnit = computed(() => props?.formData?.productPrice);
 
-const totalPerUnit = computed(() => buttonPrice.value / quantity.value);
-
-const addToCart = () => {
-  const cartItem = {
-    id: Date.now(),
-    name: props.formData.name,
-    image: props.formData.image,
-    snippet: props.formData.snippet,
-    price: buttonPrice.value,
-    productPrice: props.formData.productPrice,
-    addon: selectedFoods.value.map((addon) => addon.name),
-    addons: selectedFoods.value.map((addon) => ({
-      name: addon.name,
-      price: addon.price,
-    })),
-    selectedFood: selectedFoods.value.map((addon) => addon.name),
-    selectedPrice: totalPrice.value,
-    selectedItem: selectedCard.value,
-    quantity: quantity.value,
-    pricePerUnit: pricePerUnit.value,
-    totalPerUnit: totalPerUnit.value,
-  };
-  emit("addToCart", cartItem);
-};
-
-const closed = () => {
-  emit("closed");
-};
-
-
-populateEditData();
 </script>
 
 <style scoped>
-.container{
-  width: 500px;
-}
+
 .modal-content {
   padding-bottom: 24px;
 }

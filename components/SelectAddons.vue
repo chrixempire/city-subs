@@ -18,7 +18,7 @@
 
 <script setup>
 import { squareChecked } from "../../utils/svg";
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref, defineProps, defineEmits, watch } from 'vue';
 
 const emit = defineEmits();
 const { name, price, selectedFoods } = defineProps(['name', 'price', 'selectedFoods']);
@@ -33,7 +33,9 @@ const toggle = () => {
   selected.value = !selected.value;
   emit('toggleSelection', { name, price, selected: selected.value });
 };
-
+// watch(() => selectedFoods, (newSelectedFoods) => {
+//   selected.value = newSelectedFoods.some(food => food.name === name);
+// });
 </script>
 
 <style scoped>

@@ -99,18 +99,10 @@ const emit = defineEmits(["openEditModal"]);
 
 const openEditModal = (data) => {
   emit('openEditModal', data)
-
 };
 
 
 
-
-const totalPerPriceUnit = computed(() => {
-  return props?.data?.price / props?.data?.quantity;
-});
-
-let price = props?.data?.productPrice;
-let pricePerUnit = props?.data?.totalPerUnit
 
 
 

@@ -76,6 +76,9 @@
           </DynamicButton>
         </div>
       </div>
+      
+
+
     </div>
 
   </div>
@@ -146,6 +149,7 @@ const totalAddonPrice = computed(() => {
   return addonPrice;
 });
 
+
 const buttonPrice = computed(() => {
   const basePrice = props?.data?.price * quantity.value;
   return basePrice + totalAddonPrice.value;
@@ -175,27 +179,42 @@ const addToCart = () => {
     addons: selectedFoods.value.map((addon) => ({
       name: addon.name,
       price: addon.price,
+      selected: addon.selected 
     })),
+    AddonFoods: props.data.Addons.foods, // Include props.data.Addons.foods
+    AddonSelections: props.data.Addons.selections, // Include props.data.Addons.selections
     selectedFood: selectedFoods.value.map((addon) => addon.name),
     selectedPrice: totalPrice.value,
+    TotalselectedPrice: totalAddonPrice.value,
     selectedItem: selectedCard.value,
     quantity: quantity.value,
     pricePerUnit: pricePerUnit.value,
     totalPerUnit: totalPerUnit.value,
   }
-  const formData = {
-    selectedCard: selectedCard.value,
-    selectedFoods: selectedFoods.value,
-    quantity: quantity.value,
-    totalPrice: totalPrice.value,
-    buttonPrice: buttonPrice.value,
-    basePrice: basePrice.value,
-    pricePerUnit: pricePerUnit.value,
-    totalPerUnit: totalPerUnit.value,
-    name: props.data.name,
-    image: props.data.image,
-  };
-  emit("addToCart", cartItem, formData);
+
+  // const formData = {
+  //   name: props.data.name,
+  //   snippet: props.data.snippet,
+  //   price: buttonPrice.value,
+  //   image: props.data.image,
+  //   Addons: {
+  //     selections: [
+  //       {
+  //         label: selectedCard.value, // Assuming you want the label to be the selected card value
+  //         value: selectedCard.value,
+  //         // image: '', 
+  //       },
+  //       // ...props.data.Addons.selections 
+  //     ],
+  //     foods: selectedFoods.value.map(food => ({
+  //       name: food.name,
+  //       price: food.price
+  //     }))
+  //   }
+  // };
+
+
+  emit("addToCart", cartItem);
 };
 </script>
 

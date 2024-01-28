@@ -39,6 +39,7 @@
           @closeCart="closeMobileModal($event)"
           @checkoutDone="checkoutDone($event)"
           :stepMobile="stepp"
+          @openEditModal="openEditModal"
         />
         <div class="overall-container">
           <div class="products">

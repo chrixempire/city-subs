@@ -7,7 +7,7 @@
           :class="{ 'slide-left': step > prevStep, 'slide-right': step < prevStep }"
         >
           <div class="cart-list" v-if="step === 1 || stepMobile === 2">
-            <CartList @closeCart="closeCart" :cart="carts" />
+            <CartList    @openEditModal="openEditModal" @closeCart="closeCart" :cart="carts" />
           </div>
 
           <DeliveryInfo @clickButton="prevCart" @checkoutDone="checkoutDone" v-if="step === 2 && stepMobile === 1" />
@@ -61,7 +61,10 @@ const props = defineProps({
     required: true
   }
 });
-const emit = defineEmits(["closeCart",'checkoutDone']);
+const emit = defineEmits(["closeCart",'checkoutDone',"openEditModal"]);
+const openEditModal = (data) => {
+  emit("openEditModal", data);
+};
 const closeCart = (e) => {
   emit("closeCart");
 };

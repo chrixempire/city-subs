@@ -97,32 +97,41 @@ const toggleSelection = (food) => {
 
 const cartStore = useCartStore();
 
+// const addAddons = () => {
+//   const index = cartStore.carts.findIndex(item => item.id === props.data.id);
+//   if (index !== -1) {
+//     cartStore.carts[index].selectedItem = selectedCard.value;
+//     if (selectedFoods.value.length > 0) {
+//       cartStore.carts[index].addon = selectedFoods.value.map((addon) => addon.name);
+//       cartStore.carts[index].selectedPrice = totalPrice.value;
+//       cartStore.carts[index].TotalselectedPrice = totalPrice.value * cartStore.carts[index].quantity;
+//       cartStore.carts[index].price = (cartStore.carts[index].pricePerUnit * cartStore.carts[index].quantity) + cartStore.carts[index].TotalselectedPrice;
+//       cartStore.carts[index].totalPerUnit = cartStore.carts[index].price / cartStore.carts[index].quantity;
+//     }
+//     cartStore.saveToLocalStorage();
+//   }
+//   if (selectedFoods.value.length > 0) {
+//     selectedFoods.value = [];
+//     totalPrice.value = 0;
+//   }
+//   emit('closeEditModal');
+// }
+
 const addAddons = () => {
   const index = cartStore.carts.findIndex(item => item.id === props.data.id);
   if (index !== -1) {
     cartStore.carts[index].selectedItem = selectedCard.value;
-    if (selectedFoods.value.length > 0) {
-      cartStore.carts[index].addon = selectedFoods.value.map((addon) => addon.name);
-
-      cartStore.carts[index].selectedPrice = totalPrice.value;
-      cartStore.carts[index].TotalselectedPrice = totalPrice.value * cartStore.carts[index].quantity;
-      cartStore.carts[index].price = (cartStore.carts[index].pricePerUnit * cartStore.carts[index].quantity) + cartStore.carts[index].TotalselectedPrice;
-      cartStore.carts[index].totalPerUnit = cartStore.carts[index].price / cartStore.carts[index].quantity;
-    }
-
+    cartStore.carts[index].addon = selectedFoods.value.map((addon) => addon.name);
+    cartStore.carts[index].selectedPrice = totalPrice.value;
+    cartStore.carts[index].TotalselectedPrice = totalPrice.value * cartStore.carts[index].quantity;
+    cartStore.carts[index].price = (cartStore.carts[index].pricePerUnit * cartStore.carts[index].quantity) + cartStore.carts[index].TotalselectedPrice;
+    cartStore.carts[index].totalPerUnit = cartStore.carts[index].price / cartStore.carts[index].quantity;
     cartStore.saveToLocalStorage();
   }
-
- 
-  if (selectedFoods.value.length > 0) {
-    selectedFoods.value = [];
-    totalPrice.value = 0;
-  }
-
+  selectedFoods.value = [];
+  totalPrice.value = 0;
   emit('closeEditModal');
 }
-
-
 
 const selectItem = (value) => {
   selectedCard.value = value;

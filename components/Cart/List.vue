@@ -80,7 +80,7 @@ const closeCart = (e) => {
   emit("closeCart");
 };
 
-const isMobile = ref(process.client ? window.innerWidth <= 450 : false);
+const isMobile = ref(process.client ? window.innerWidth <= 550 : false);
 
 const totalQuantity = computed(() => {
   cartStore.loadFromLocalStorage();
@@ -101,7 +101,7 @@ const mealText = computed(() => {
 onMounted(() => {
   if (process.client) {
     const handleResize = () => {
-      isMobile.value = window.innerWidth <= 450;
+      isMobile.value = window.innerWidth <= 550;
     };
 
     window.addEventListener("resize", handleResize);
@@ -178,7 +178,7 @@ onMounted(() => {
   width: 100%;
   padding: 16px 24px 32px 24px;
 }
-@media screen and (max-width: 450px) {
+@media screen and (max-width: 550px) {
   .cart-list {
     margin-bottom: 100px;
   }

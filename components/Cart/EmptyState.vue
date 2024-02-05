@@ -58,7 +58,7 @@ const placeOrder= (e) => {
       text-align: center;
   }
 
-  @media screen and (max-width: 450px) {
+  @media screen and (max-width: 550px) {
     .empty-cart-text{
       width: 100%;
       display: flex;

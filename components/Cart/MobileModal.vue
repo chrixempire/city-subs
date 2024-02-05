@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="isMobile">
     <transition name="modal-slide">
       <div v-if="showMobileModal" class="modal">
         <div
@@ -106,6 +106,21 @@ const totalPrice = computed(() => {
   // Calculate the total quantity by summing up the quantities of all objects in the cart array
   return cartStore.carts.reduce((total, item) => total + item.price, 0);
 });
+
+const isMobile = ref(process.client ? window.innerWidth <= 550 : false);
+
+onMounted(() => {
+  if (process.client) {
+    const handleResize = () => {
+      isMobile.value = window.innerWidth <= 550;
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }
+  window.scrollTo(0, 0);
+});
 </script>
 <style scoped>
 .modal {
@@ -208,4 +223,7 @@ const totalPrice = computed(() => {
 .slide-right {
   animation: slideRight 0.4s ease-in-out;
 }
+
+
+
 </style>

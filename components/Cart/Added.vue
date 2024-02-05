@@ -1,62 +1,19 @@
 <template>
   <div class="container">
     <div class="cartlist">
-      <div class="cartlist-addons" v-if="data?.addons?.length">
-        <div class="cart-topp">
-          <div class="cartlist-image">
-            <DynamicImage class="image" :imageUrl="data?.image" :isModalView="true" />
-          </div>
-          <div class="cartlist-item">
-            <div class="cartlist-details">
-              <p class="text-body-small-regular regular text-grey2">
-                {{ data?.name }}({{ data?.selectedItem }})
-              </p>
-              <div class="delete-cart">
-                <button @click="deleteCart(data?.id)">
-                    <div class="delete-icon" v-html="deleteIcon"></div>
-                </button>
-              </div>
-            </div>
-            <div class="cartlist-action">
-              <p class="text-body-large-medium medium text-grey1">
-                ₦{{ data?.productPrice }}
-              </p>
-              <div class="cart-counter">
-                <ProductCounterBtn
-                  :modalCounter="modalCounter"
-                  :quantity="quantity"
-                  @increaseQuantity="increaseQuantity"
-                  @decreaseQuantity="decreaseQuantity"
-                  class="count"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="cart-addons">
-          <div class="addons-details">
-            <p class="text-body-small-medium medium">Your add ons</p>
-            <p class="text-body-small-medium medium">₦{{ data.price }}</p>
-          </div>
-          <div class="addons-added" v-for="(name, index) in data?.addon" :key="index">
-            <p>
-              {{ name }}
-            </p>
-          </div>
-          <div class="edit-addons" @click="openEditModal(data)">
-            <div class="edit-icon" v-html="editIcon"></div>
-            <p class="text-body-small-medium medium text-grey1">Edit add ons</p>
-          </div>
-        </div>
-      </div>
-      <div class="cartlist-noaddons" v-else>
+
+
+      <div class="cartlist-noaddons">
+       <div class="image-price">
         <div class="cartlist-image">
           <DynamicImage class="image" :imageUrl="data?.image" :isModalView="true" />
         </div>
         <div class="cartlist-item">
           <div class="cartlist-details">
-            <p class="text-body-small-regular regular text-grey2">{{ data?.name }}</p>
-            <p class="text-body-large-medium medium text-grey1">{{ data?.price }}</p>
+            <p class="text-body-small-regular regular text-grey2">{{ data?.name }}
+              <span v-if="data?.AddonSelections?.length">({{ data?.selectedItem }})</span>
+            </p>
+            <p class="text-body-large-medium medium text-grey1">₦{{ data?.productPrice }}</p>
           </div>
           <div class="cartlist-action">
             <div class="delete-cart">
@@ -75,6 +32,22 @@
             </div>
           </div>
         </div>
+       </div>
+        <div class="cart-addons" v-if="data?.AddonFoods?.length">
+          <div class="addons-details">
+            <p class="text-body-small-medium medium">Your add ons</p>
+            <p class="text-body-small-medium medium">₦{{ data.price }}</p>
+          </div>
+          <div class="addons-added" v-for="(name, index) in data?.selectedNames" :key="index">
+            <p>
+              {{ name }}
+            </p>
+          </div>
+          <div class="edit-addons" @click="openEditModal(data)">
+            <div class="edit-icon" v-html="editIcon"></div>
+            <p class="text-body-small-medium medium text-grey1">Edit add ons</p>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -90,10 +63,18 @@ import { useCartStore } from '~/stores/index.js';
 const props = defineProps(["data"]);
 const modalCounter = ref(false);
 
+
+const updateQuantityFromProps = () => {
+  if (props.data) {
+    quantity.value = props.data.quantity;
+  }
+};
+
+watch(() => props.data.quantity, () => {
+  updateQuantityFromProps();
+});
+
 const quantity = ref(props?.data?.quantity);
-
-
-
 
 const emit = defineEmits(["openEditModal"]);
 
@@ -152,9 +133,23 @@ const deleteCart = (productId) => {
   }
 }
 
+onMounted(() => {
+  console.log('quantity', quantity.value)
+  if (props.data) {
+    quantity.value = props.data.quantity
 
+   
+  }
+});
 
+watch(() => props.data, (newValue, oldValue) => {
+  if (newValue) {
+    quantity.value = newValue.quantity 
 
+  }
+});
+
+updateQuantityFromProps()
 </script>
 
 <style scoped>
@@ -168,12 +163,18 @@ const deleteCart = (productId) => {
   flex-direction: column;
   gap: 16px;
   justify-content: flex-start;
-  /* padding: 0px 20px; */
 }
 .cartlist-noaddons {
   display: flex;
+  flex-direction: column;
   width: 100%;
-  padding: 0px 0px 100px 0px;
+  padding: 0px 0px 25px 0px;
+  align-items: flex-start;
+  gap: 16px;
+}
+.image-price{
+  display: flex;
+  width: 100%;
   align-items: flex-start;
   gap: 16px;
 }
@@ -219,12 +220,9 @@ const deleteCart = (productId) => {
   gap: 8px;
   cursor: pointer;
 }
-
 .cartlist-image {
   height: 96px;
-  /* width: px; */
 }
-
 img {
   height: 100%;
   width: 100%;
@@ -253,5 +251,14 @@ img {
 }
 .cartlist-action {
   height: 40px;
+}
+@media screen and (max-width: 300px) {
+  .image-price{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: flex-start;
+  gap: 16px;
+}
 }
 </style>

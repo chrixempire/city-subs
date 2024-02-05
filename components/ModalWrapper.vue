@@ -18,7 +18,17 @@
       required: true,
     },
   })
-  
+  watch(() => props.showModal, (newValue) => {
+  handleBodyScroll(newValue);
+});
+
+const handleBodyScroll = (show) => {
+  if (show) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = 'auto';
+  }
+};
   </script>
     
   <style>
@@ -43,6 +53,7 @@
     max-height: 90%;
     background: white;
     padding: 16px;
+
     border-radius: 16px;
     background: white;
     overflow-y: scroll;

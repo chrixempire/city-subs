@@ -52,7 +52,7 @@ header {
   background-color: #f4f5f8;
 }
 
-@media screen and (max-width: 450px) {
+@media screen and (max-width: 550px) {
   .cart-header {
     width: 100%;
     /* height: 120px; */

@@ -21,7 +21,6 @@
       :products="products"
       @filterProducts="updateFilteredProducts"
       @filteredProducts="updateSearchedProducts"
-      
     >
       <template v-slot:container>
         <CartModal
@@ -31,7 +30,6 @@
           @checkoutDone="checkoutDone($event)"
           :stepped="step"
           @openEditModal="openEditModal"
-          
         />
         <CartMobileModal
           :carts="cartItems"
@@ -43,10 +41,10 @@
         />
         <div class="overall-container">
           <div class="products">
-            <div v-if="!products.length" class="web-loader">
+            <div v-if="!products.length || !showOnDisplay" class="web-loader">
               <LoaderWeb />
             </div>
-            <div class="product-content">
+            <div class="product-content" v-if="showOnDisplay">
               <div class="product-container">
                 <ProductCard
                   v-for="(product, index) in products"
@@ -57,12 +55,11 @@
               </div>
             </div>
 
-
             <div class="modals">
               <ModalWrapper :showModal="showModal">
                 <template v-slot:content>
                   <div class="Addons-container" v-if="selectedProduct">
-                    <Addons
+                    <NewAddons
                       :data="selectedProduct"
                       @closed="closemodal"
                       @addToCart="addToCart"
@@ -71,16 +68,29 @@
                 </template>
               </ModalWrapper>
             </div>
+<!-- 
+            <div class="modals">
+              <ModalWrapper :showModal="showEditModal">
+                <template v-slot:content>
+                  <div class="Addons-container">
+                    <EditModal
+                      :data="selectedCartItem"
+                      :formData="form"
+                      @closed="closeEditModal"
+                    />
+                  </div>
+                </template>
+              </ModalWrapper>
+            </div> -->
 
             <div class="modals">
               <ModalWrapper :showModal="showEditModal">
                 <template v-slot:content>
-                  <div class="Addons-container" >
-                    <EditModal
-             
+                  <div class="Addons-container">
+                    <NewEditModal
                       :data="selectedCartItem"
                       :formData="form"
-                      @closeEditModal="closeEditModal"
+                      @closed="closeEditModal"
                     />
                   </div>
                 </template>
@@ -93,19 +103,18 @@
         </div>
       </template>
     </MainLayouts>
-    <New :data="selectedProduct"/>
   </div>
 </template>
 
 <script setup>
 import MainLayouts from "/layouts/MainLayouts.vue";
 import { ref, watchEffect } from "vue";
-import { useCartStore } from '~/stores/index.js';
+import { useCartStore } from "~/stores/index.js";
 const cartStore = useCartStore();
 
 // import { cart } from "~/cart.js";
 
-const cartItems =computed(() => useCartStore().carts);
+const cartItems = computed(() => useCartStore().carts);
 
 // const cartLength = computed(() => cartItems.value.length);
 const step = ref(1);
@@ -117,25 +126,21 @@ const showEditModal = ref(false);
 const showSuccessModal = ref(false);
 const showMobileModal = ref(false);
 const showCreatedModal = ref(false);
+const showOnDisplay = ref(false);
 
-
-
-
-
-let form = ref(null)
+let form = ref(null);
 const selectedCartItem = ref(null);
 
 const openEditModal = (data) => {
-  selectedCartItem.value = data
-  showEditModal.value = true
-  console.log("data,", data)
-  console.log('form',form)
-}
+  selectedCartItem.value = data;
+  showEditModal.value = true;
+  console.log("data,", data);
+  console.log("form", form);
+};
 const closeEditModal = () => {
-  showEditModal.value = false
+  showEditModal.value = false;
   selectedCartItem.value = null;
-
-}
+};
 
 const closemodal = () => {
   showModal.value = false;
@@ -147,25 +152,21 @@ const addToCart = (cartItem) => {
   showModal.value = false;
   selectedProduct.value = null;
   console.log("Item added to cart:", cartItem);
- 
-
 };
-
 
 const checkoutDone = (e) => {
   displayModal.value = false;
   showMobileModal.value = false;
-  showSuccessModal.value = true
-}
+  showSuccessModal.value = true;
+};
 const closeSuccesModal = (e) => {
-  showSuccessModal.value = false
+  showSuccessModal.value = false;
   displayModal.value = false;
   showMobileModal.value = false;
-  useCartStore().clearCart()
-  step.value = 2
-  stepp.value = 2
-}
-
+  useCartStore().clearCart();
+  step.value = 2;
+  stepp.value = 2;
+};
 
 const tabs = ref([
   "All Categories",
@@ -320,13 +321,13 @@ const products = ref(initialProducts);
 
 const closedModal = () => {
   showCreatedModal.value = false;
+  showOnDisplay.value = true
 };
 onMounted(() => {
   showCreatedModal.value = true;
-  cartStore.loadFromLocalStorage()
-  step.value = 1
-  stepp.value = 1
-  
+  cartStore.loadFromLocalStorage();
+  step.value = 1;
+  stepp.value = 1;
 });
 
 const openModal = (e) => {
@@ -350,22 +351,22 @@ const closeMobileModal = (e) => {
 //   }
 // };
 
-
-
-
-
 const updateFilteredProducts = (selectedTab, searchQuery) => {
   let filtered = initialProducts;
 
-  if (selectedTab !== 'All Categories') {
-    filtered = initialProducts.filter(product => product.snippet === selectedTab);
+  if (selectedTab !== "All Categories") {
+    filtered = initialProducts.filter((product) => product.snippet === selectedTab);
   }
 
   if (searchQuery) {
     const query = searchQuery.toLowerCase().trim();
-    filtered = filtered.filter(product =>
-      product.name.toLowerCase().includes(query) ||
-      (product.Addons && product.Addons.selections.some(selection => selection.label.toLowerCase().includes(query)))
+    filtered = filtered.filter(
+      (product) =>
+        product.name.toLowerCase().includes(query) ||
+        (product.Addons &&
+          product.Addons.selections.some((selection) =>
+            selection.label.toLowerCase().includes(query)
+          ))
     );
   }
 
@@ -377,21 +378,26 @@ const updateSearchedProducts = (searchQuery) => {
 
   if (searchQuery) {
     const query = searchQuery.toLowerCase().trim();
-    filtered = filtered.filter(product =>
-      product.name.toLowerCase().includes(query) ||
-      product.snippet.toLowerCase().includes(query) ||
-      product.price.toString().includes(query) || // Convert price to string for search
-      (product.Addons && product.Addons.selections.some(selection => selection.label.toLowerCase().includes(query))) ||
-      (product.Addons && product.Addons.foods.some(food => 
-        food.name.toLowerCase().includes(query) ||
-        food.price.toString().includes(query) // Convert food price to string for search
-      ))
+    filtered = filtered.filter(
+      (product) =>
+        product.name.toLowerCase().includes(query) ||
+        product.snippet.toLowerCase().includes(query) ||
+        product.price.toString().includes(query) || // Convert price to string for search
+        (product.Addons &&
+          product.Addons.selections.some((selection) =>
+            selection.label.toLowerCase().includes(query)
+          )) ||
+        (product.Addons &&
+          product.Addons.foods.some(
+            (food) =>
+              food.name.toLowerCase().includes(query) ||
+              food.price.toString().includes(query) // Convert food price to string for search
+          ))
     );
   }
 
   products.value = filtered;
 };
-
 </script>
 
 <style scoped>
@@ -434,7 +440,13 @@ const updateSearchedProducts = (searchQuery) => {
   margin-bottom: 100px;
 }
 
-@media screen and (max-width: 450px) {
+@media screen and (max-width: 550px) {
+  .product-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+  gap: 24px 28px;
+}
   .overall-container {
     display: flex;
     flex-direction: column;
@@ -446,5 +458,14 @@ const updateSearchedProducts = (searchQuery) => {
   .product-content {
     margin-bottom: 100px;
   }
+}
+
+@media screen and (max-width: 300px) {
+  .product-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+  gap: 24px 28px;
+}
 }
 </style>

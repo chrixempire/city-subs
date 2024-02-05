@@ -39,16 +39,17 @@
           <div class="addMore">
             <div class="added">
               <p class="text-body-small-medium medium">ADD ADD-ONS</p>
-              <div class="multiChoice">
-                <SelectAddons
-                  v-for="food in data?.Addons?.foods"
-                  :key="food?.name"
-                  :name="food?.name"
-                  :price="food?.price"
-                  :selectedFoods="selectedFoods"
-                  @toggleSelection="toggleSelection"
+              <ul class="multiChoice">
+                <NewSelectAddons
+                  v-for="(food, index) in data?.Addons?.foods"
+                  :key="index"
+                  :name="food.name"
+                  :price="food.price"
+                  :selectedNames="selectedNames"
+                  @addToSelected="addToSelected(food.name, food.price)"
+                  @removeFromSelected="removeFromSelected(food.name, food.price)"
                 />
-              </div>
+              </ul>
             </div>
           </div>
         </div>
@@ -105,8 +106,6 @@ const closed = (e) => {
   emit("closed");
 };
 
-let selectedFoods = ref([]);
-
 const quantity = ref(1);
 const increaseQuantity = () => {
   quantity.value += 1;
@@ -120,15 +119,31 @@ const decreaseQuantity = () => {
 };
 
 const totalPrice = ref(0);
-const toggleSelection = (food) => {
-  const index = selectedFoods.value.findIndex((item) => item.name === food.name);
 
-  if (index === -1) {
-    selectedFoods.value.push(food);
+const selectedNames = ref([]);
+const addonFoods = ref(props.data?.Addons?.foods ?? []);
+
+
+
+selectedNames.value.forEach(name => {
+  const food = addonFoods.value.find(item => item.name === name);
+  if (food) {
     totalPrice.value += food.price;
-  } else {
-    selectedFoods.value.splice(index, 1);
-    totalPrice.value -= food.price;
+  }
+});
+
+const addToSelected = (name, price) => {
+  if (!selectedNames.value.includes(name)) {
+    selectedNames.value.push(name);
+    totalPrice.value += price;
+  }
+};
+
+const removeFromSelected = (name, price) => {
+  const index = selectedNames.value.indexOf(name);
+  if (index !== -1) {
+    selectedNames.value.splice(index, 1);
+    totalPrice.value -= price;
   }
 };
 
@@ -162,12 +177,7 @@ const addToCart = () => {
     snippet: props.data.snippet,
     price: buttonPrice.value,
     productPrice: basePrice.value,
-    addon: selectedFoods.value.map((addon) => addon.name),
-    addons: selectedFoods.value.map((addon) => ({
-      name: addon.name,
-      price: addon.price,
-      selected: addon.selected,
-    })),
+    selectedNames: selectedNames.value,
     AddonFoods: props.data.Addons?.foods ?? [],
     AddonSelections: props.data.Addons?.selections ?? [],
     selectedPrice: totalPrice.value,
@@ -177,6 +187,7 @@ const addToCart = () => {
     pricePerUnit: pricePerUnit.value,
     totalPerUnit: totalPerUnit.value,
   };
+
   emit("addToCart", cartItem);
 };
 </script>
@@ -255,7 +266,6 @@ button svg {
 .multiChoice {
   width: 100%;
   display: flex;
-  gap: 32px;
   flex-direction: column;
 }
 

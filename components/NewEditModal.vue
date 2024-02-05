@@ -46,12 +46,14 @@
                   :key="index"
                   :name="food.name"
                   :price="food.price"
-                  :selectedNames="selectedNames"
+                  :selectedNames="localSelectedNames"
                   @addToSelected="addToSelected(food.name, food.price)"
                   @removeFromSelected="removeFromSelected(food.name, food.price)"
                 />
 
                 <p>{{ totalPriceWithQuantity }}</p>
+                <p>{{ localSelectedNames }}</p>
+                <p>{{ localTotalPrice }}</p>
               </div>
             </div>
           </div>
@@ -85,11 +87,10 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits, onMounted, watch } from "vue";
-import { cancel } from "../../utils/svg";
+import { ref, defineProps, defineEmits, onMounted, watch, computed } from "vue";
+import { cancel } from "../utils/svg";
 import { useCartStore } from "~/stores/index.js";
 const cartStore = useCartStore();
-
 const props = defineProps({
   formData: {
     type: Object,
@@ -100,7 +101,7 @@ const props = defineProps({
     default: null,
   },
 });
-const emit = defineEmits(["closeEditModal",'closed']);
+const emit = defineEmits(["closeEditModal", "closed"]);
 const modalCounter = ref(true);
 const selectedCard = ref("");
 const isLoading = ref(false);
@@ -109,6 +110,8 @@ const selectedFoods = ref([]);
 const totalPrice = ref(0);
 const selectedNames = ref([]);
 const addonFoods = ref(props.data?.AddonFoods ?? []);
+const localSelectedNames = ref([]);
+const localTotalPrice = ref(0);
 
 selectedNames.value.forEach((name) => {
   const food = addonFoods.value.find((item) => item.name === name);
@@ -118,74 +121,51 @@ selectedNames.value.forEach((name) => {
 });
 
 const addToSelected = (name, price) => {
-  if (!selectedNames.value.includes(name)) {
-    selectedNames.value.push(name);
-    totalPrice.value += price;
+  if (!localSelectedNames.value.includes(name)) {
+    localSelectedNames.value.push(name);
+    localTotalPrice.value += price;
   }
 };
 const removeFromSelected = (name, price) => {
-  const index = selectedNames.value.indexOf(name);
+  const index = localSelectedNames.value.indexOf(name);
   if (index !== -1) {
-    selectedNames.value.splice(index, 1);
-    totalPrice.value -= price;
+    localSelectedNames.value.splice(index, 1);
+    localTotalPrice.value -= price;
   }
 };
-
 const updateTotalPrice = () => {
-  totalPrice.value = props.data.selectedPrice; 
-  selectedNames.value.forEach((name) => {
+  localTotalPrice.value = props.data.selectedPrice;
+  localSelectedNames.value.forEach((name) => {
     const food = addonFoods.value.find((item) => item.name === name);
     if (food) {
-      totalPrice.value += food.price;
-      
+      localTotalPrice.value += food.price;
     }
   });
 };
-
 const closed = (e) => {
   emit("closed");
 };
 
 const quantity = ref(props.data?.quantity || 1);
-
 const finalPrice = computed(() => {
-  return (totalPrice.value + props?.data?.pricePerUnit) * quantity.value;
+  return (localTotalPrice.value + props?.data?.pricePerUnit) * quantity.value;
 });
- 
-const updatePricesAndQuantity = () => {
-  const index = cartStore.carts.findIndex((item) => item.id === props.data.id);
-  if (index !== -1) {
-    cartStore.carts[index].quantity = quantity.value;
-    cartStore.carts[index].selectedPrice = totalPrice.value * quantity.value;
-    cartStore.carts[index].price = cartStore.carts[index].totalPerUnit * quantity.value;
-    cartStore.carts[index].productPrice =
-      cartStore.carts[index].pricePerUnit * quantity.value;
-    cartStore.saveToLocalStorage();
-  }
-};
-
 const increaseQuantity = () => {
   quantity.value += 1;
-  updatePricesAndQuantity();
 };
-
 const decreaseQuantity = () => {
   if (quantity.value > 1) {
     quantity.value -= 1;
-    updatePricesAndQuantity();
   }
 };
 
 const totalPriceWithQuantity = computed(() => {
-  return totalPrice.value * quantity.value;
+  return localTotalPrice.value * quantity.value;
 });
 
-
-
-
-
-
 const addAddons = () => {
+  selectedNames.value = [...localSelectedNames.value];
+  totalPrice.value = localTotalPrice.value;
   const index = cartStore.carts.findIndex((item) => item.id === props.data.id);
   if (index !== -1) {
     cartStore.carts[index].selectedItem = selectedCard.value;
@@ -194,6 +174,8 @@ const addAddons = () => {
     cartStore.carts[index].selectedPrice = totalPrice.value;
     cartStore.carts[index].TotalselectedPrice =
       totalPrice.value * cartStore.carts[index].quantity;
+    cartStore.carts[index].productPrice =
+      cartStore.carts[index].pricePerUnit * quantity.value;
     cartStore.carts[index].price =
       cartStore.carts[index].pricePerUnit * cartStore.carts[index].quantity +
       cartStore.carts[index].TotalselectedPrice;
@@ -215,10 +197,8 @@ onMounted(() => {
     quantity.value = props.data.quantity;
   }
   if (props.data && props.data.selectedNames) {
-    selectedNames.value = props.data.selectedNames;
-
+    localSelectedNames.value = [...props.data.selectedNames];
     updateTotalPrice();
-
   }
 });
 
@@ -230,8 +210,7 @@ watch(
       quantity.value = newValue.quantity;
     }
     if (newValue && newValue.selectedNames) {
-      selectedNames.value = newValue.selectedNames;
-
+      localSelectedNames.value = [...newValue.selectedNames];
       updateTotalPrice();
     }
   }

@@ -1,18 +1,25 @@
 <template>
-    <div class="container">
+ 
         <li @click="selectItem(data.value)" class="select-content">
+          <div class="select-content-container">
             <p class="text-body-large-regular regular text-grey1">
                 {{ data?.label }}
             </p>
           
             <div class="radioInput-icon circle" :class="{ selected: isSelected }"  v-html="radioInput"></div>
             <div class="roundChecked-icon" v-if="isSelected" v-html="roundChecked"></div>
-        </li>
-        <div v-if="slotNeeded" class="add-slot" @click="selectItem(data.value)"
+          </div>
+
+
+
+
+            <div v-if="slotNeeded" class="add-slot" @click="selectItem(data.value)"
             :class="{ clicked: selectedItem === data.value }">
              <slot name="image"></slot>
         </div>
-    </div>
+        </li>
+
+
 </template>
 
   
@@ -45,6 +52,10 @@ const selectItem = (value) => {
   
 
 <style scoped>
+template:hover{
+  background: red;
+  border-radius: 12px;
+}
 .container {
     display: flex;
     flex-direction: column;
@@ -66,14 +77,21 @@ svg circle {
 .select-content{
     width: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 6px;
   cursor: pointer;
-
-
 }
-
-.select-content:hover{
+.select-content-container{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items:center;
+  cursor: pointer;
+  padding: 6px 0px;
+}
+li:hover{
   background: var(--grey---grey6);
   border-radius: 12px;
 }

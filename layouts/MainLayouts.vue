@@ -60,17 +60,14 @@ const openMobileCart = () => {
   emit("openMobileCart");
 };
 
-const isMobile = ref(process.client ? window.innerWidth <= 450 : false);
+const isMobile = ref(process.client ? window.innerWidth <= 550 : false);
 
 onMounted(() => {
   if (process.client) {
     const handleResize = () => {
-      isMobile.value = window.innerWidth <= 450;
+      isMobile.value = window.innerWidth <= 550;
     };
-
     window.addEventListener("resize", handleResize);
-
-    // Cleanup the event listener on component unmount
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -131,7 +128,7 @@ onMounted(() => {
   }
 }
 
-@media screen and (max-width: 450px) {
+@media screen and (max-width: 550px) {
   .top-details {
     position: sticky;
     top: 0;

@@ -1,6 +1,6 @@
 <template>
   <div class="cart-modal">
-    <div class="full-cart-bg">
+    <div class="full-cart-bg" v-if="!isMobile">
       <transition name="slide" appear>
         <div class="full-cart" v-if="showModal">
           <div
@@ -41,7 +41,6 @@ import { useCartStore } from "~/stores/index.js";
 const cartItems = useCartStore().carts;
 const TotalCart = computed(() => useCartStore().cartLength);
 const isLoading = ref(false);
-// const header = ref("My order");
 const props = defineProps({
   showModal: {
     type: Boolean,
@@ -59,6 +58,21 @@ const props = defineProps({
 const step = ref(1);
 const prevStep = ref(1);
 const emit = defineEmits(["closeCart", "checkoutDone", "openEditModal"]);
+
+watch(
+  () => props.showModal,
+  (newValue) => {
+    handleBodyScroll(newValue);
+  }
+);
+
+const handleBodyScroll = (show) => {
+  if (show) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "auto";
+  }
+};
 
 const openEditModal = (data) => {
   emit("openEditModal", data);
@@ -80,6 +94,20 @@ const prevCart = (e) => {
   step.value--;
 };
 const cartLength = computed(() => props.carts.length > 0);
+const isMobile = ref(process.client ? window.innerWidth <= 550 : false);
+
+onMounted(() => {
+  if (process.client) {
+    const handleResize = () => {
+      isMobile.value = window.innerWidth <= 550;
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }
+  window.scrollTo(0, 0);
+});
 </script>
 
 <style scoped>
@@ -89,7 +117,6 @@ const cartLength = computed(() => props.carts.length > 0);
   left: auto;
   z-index: 1000;
 }
-
 .full-cart-bg {
   display: flex;
   justify-content: flex-end;
@@ -98,7 +125,6 @@ const cartLength = computed(() => props.carts.length > 0);
   left: 0px;
   top: 0px;
 }
-
 .full-cart {
   display: flex;
   flex-direction: column;
@@ -131,7 +157,6 @@ const cartLength = computed(() => props.carts.length > 0);
 .cart-bg {
   width: 100%;
   height: 100%;
-
   position: fixed;
   display: flex;
   align-items: center;
@@ -242,24 +267,19 @@ header {
 .slide-right {
   animation: slideRight 0.4s ease-in-out;
 }
-
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1350px) {
   .full-cart {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-
     gap: 16px;
-
     position: absolute;
-    width: 70%;
+    width: 50%;
     max-width: 100%;
     height: 100vh;
     margin-right: auto;
     top: 0px;
-
     background: #ffffff;
-
     position: fixed;
     top: 50%;
     right: 0%;
@@ -267,4 +287,45 @@ header {
     z-index: 1000;
   }
 }
+@media screen and (max-width: 1000px) {
+  .full-cart {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    position: absolute;
+    width: 70%;
+    max-width: 100%;
+    height: 100vh;
+    margin-right: auto;
+    top: 0px;
+    background: #ffffff;
+    position: fixed;
+    top: 50%;
+    right: 0%;
+    transform: translate(-0%, -50%);
+    z-index: 1000;
+  }
+}
+@media screen and (max-width: 950px) {
+  .full-cart {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    position: absolute;
+    width: 70%;
+    max-width: 100%;
+    height: 100vh;
+    margin-right: auto;
+    top: 0px;
+    background: #ffffff;
+    position: fixed;
+    top: 50%;
+    right: 0%;
+    transform: translate(-0%, -50%);
+    z-index: 1000;
+  }
+}
+
 </style>

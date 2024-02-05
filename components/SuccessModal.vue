@@ -84,7 +84,7 @@ align-self: stretch;
   cursor: pointer;
 }
 
-@media screen and (max-width: 450px) {
+@media screen and (max-width: 550px) {
     .container{
         width: 100%;
     }

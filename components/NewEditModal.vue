@@ -51,9 +51,7 @@
                   @removeFromSelected="removeFromSelected(food.name, food.price)"
                 />
 
-                <p>{{ totalPriceWithQuantity }}</p>
-                <p>{{ localSelectedNames }}</p>
-                <p>{{ localTotalPrice }}</p>
+              
               </div>
             </div>
           </div>
@@ -69,16 +67,16 @@
           <DynamicButton
             class="bold text-button-standard standard"
             @clickButton="addAddons()"
-            buttonText="Add-ons"
+            buttonText="Add addons"
             :isLoading="isLoading"
             :showText="true"
             size="standard"
             type="primary"
             :disabled="data?.Addons && !selectedCard"
           >
-            <template v-slot:price>
+            <!-- <template v-slot:price>
               <p class="text-body-large-bold bolder">(₦{{ finalPrice }})</p>
-            </template>
+            </template> -->
           </DynamicButton>
         </div>
       </div>

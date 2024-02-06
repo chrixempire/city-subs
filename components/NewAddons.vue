@@ -196,7 +196,13 @@ const addToCart = () => {
 .modal-content {
   padding-bottom: 24px;
 }
-
+.cancel-btn{
+  position: sticky;
+  top: 0;
+  background: white;
+  padding:16px 0px;
+  transition: all 0.3s ease;
+}
 .cancel {
   background: var(--grey---grey6);
   width: 48px;

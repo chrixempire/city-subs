@@ -50,8 +50,6 @@
                   @addToSelected="addToSelected(food.name, food.price)"
                   @removeFromSelected="removeFromSelected(food.name, food.price)"
                 />
-
-              
               </div>
             </div>
           </div>
@@ -67,16 +65,16 @@
           <DynamicButton
             class="bold text-button-standard standard"
             @clickButton="addAddons()"
-            buttonText="Add addons"
+            buttonText="Add "
             :isLoading="isLoading"
             :showText="true"
             size="standard"
             type="primary"
             :disabled="data?.Addons && !selectedCard"
           >
-            <!-- <template v-slot:price>
+            <template v-slot:price>
               <p class="text-body-large-bold bolder">(₦{{ finalPrice }})</p>
-            </template> -->
+            </template>
           </DynamicButton>
         </div>
       </div>
@@ -148,6 +146,7 @@ const quantity = ref(props.data?.quantity || 1);
 const finalPrice = computed(() => {
   return (localTotalPrice.value + props?.data?.pricePerUnit) * quantity.value;
 });
+
 const increaseQuantity = () => {
   quantity.value += 1;
 };
@@ -206,6 +205,8 @@ watch(
     if (newValue) {
       selectedCard.value = newValue.selectedItem;
       quantity.value = newValue.quantity;
+      
+      
     }
     if (newValue && newValue.selectedNames) {
       localSelectedNames.value = [...newValue.selectedNames];
@@ -219,7 +220,13 @@ watch(
 .modal-content {
   padding-bottom: 24px;
 }
-
+.cancel-btn{
+  position: sticky;
+  top: 0;
+  background: white;
+  padding:16px 0px;
+  transition: all 0.3s ease;
+}
 .cancel {
   background: var(--grey---grey6);
   width: 48px;

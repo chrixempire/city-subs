@@ -1,18 +1,6 @@
 <template>
     <div>
-      <TestEnv
-        v-for="(food, index) in foods"
-        :key="index"
-        :name="food.name"
-        :price="food.price"
-        :selectedNames="selectedNames"
-        @addToSelected="addToSelected(food.name, food.price)"
-        @removeFromSelected="removeFromSelected(food.name, food.price)"
-      />
-      <div>
-        <p>Selected Food Items: {{ selectedNames }}</p>
-        <p>Total Price: ₦{{ totalPrice }}</p>
-      </div>
+    <SearchEmptyState/>
     </div>
   </template>
   <script setup>

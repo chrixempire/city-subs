@@ -53,6 +53,8 @@ watch(
     isSelected.value = newSelectedNames.includes(name);
   }
 );
+
+
 </script>
 
 <style scoped>

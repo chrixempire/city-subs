@@ -187,6 +187,7 @@ const addToCart = () => {
 }
 
 .cancel {
+
   background: var(--grey---grey6);
   width: 48px;
   height: 48px;
@@ -196,6 +197,7 @@ const addToCart = () => {
   border-radius: 100px;
   margin-left: auto;
   cursor: pointer;
+
 }
 
 .btn-ctn {

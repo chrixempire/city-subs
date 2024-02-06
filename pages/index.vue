@@ -41,10 +41,16 @@
         />
         <div class="overall-container">
           <div class="products">
-            <div v-if="!products.length || !showOnDisplay" class="web-loader">
+            <div
+              v-if="
+                (!products.length || !showOnDisplay) &&
+                !(!products.length  && showEmptySearch)
+              "
+              class="web-loader"
+            >
               <LoaderWeb />
             </div>
-            <div class="product-content" v-if="showOnDisplay">
+            <div class="product-content" v-if="showOnDisplay || !showEmptySearch">
               <div class="product-container">
                 <ProductCard
                   v-for="(product, index) in products"
@@ -53,6 +59,12 @@
                   @clickedButton="open(product)"
                 />
               </div>
+            </div>
+            <div
+              v-if="!products.length && showEmptySearch"
+              class="search-empty-state"
+            >
+              <SearchEmptyState />
             </div>
 
             <div class="modals">
@@ -68,7 +80,7 @@
                 </template>
               </ModalWrapper>
             </div>
-<!-- 
+            <!-- 
             <div class="modals">
               <ModalWrapper :showModal="showEditModal">
                 <template v-slot:content>
@@ -96,9 +108,6 @@
                 </template>
               </ModalWrapper>
             </div>
-
-
-
           </div>
         </div>
       </template>
@@ -108,15 +117,11 @@
 
 <script setup>
 import MainLayouts from "/layouts/MainLayouts.vue";
-import { ref, watchEffect } from "vue";
+import { ref, watchEffect, computed } from "vue";
 import { useCartStore } from "~/stores/index.js";
 const cartStore = useCartStore();
 
-// import { cart } from "~/cart.js";
-
 const cartItems = computed(() => useCartStore().carts);
-
-// const cartLength = computed(() => cartItems.value.length);
 const step = ref(1);
 const stepp = ref(1);
 const displayModal = ref(false);
@@ -127,10 +132,10 @@ const showSuccessModal = ref(false);
 const showMobileModal = ref(false);
 const showCreatedModal = ref(false);
 const showOnDisplay = ref(false);
+const showEmptySearch = ref(false)
 
 let form = ref(null);
 const selectedCartItem = ref(null);
-
 const openEditModal = (data) => {
   selectedCartItem.value = data;
   showEditModal.value = true;
@@ -141,19 +146,16 @@ const closeEditModal = () => {
   showEditModal.value = false;
   selectedCartItem.value = null;
 };
-
 const closemodal = () => {
   showModal.value = false;
   selectedProduct.value = null;
 };
-
 const addToCart = (cartItem) => {
   useCartStore().addToCart(cartItem);
   showModal.value = false;
   selectedProduct.value = null;
   console.log("Item added to cart:", cartItem);
 };
-
 const checkoutDone = (e) => {
   displayModal.value = false;
   showMobileModal.value = false;
@@ -167,7 +169,6 @@ const closeSuccesModal = (e) => {
   step.value = 2;
   stepp.value = 2;
 };
-
 const tabs = ref([
   "All Categories",
   "Classic sub",
@@ -182,7 +183,6 @@ const open = (product) => {
   showModal.value = true;
   console.log(product);
 };
-
 const initialProducts = [
   {
     name: "Classic beef burger",
@@ -321,7 +321,9 @@ const products = ref(initialProducts);
 
 const closedModal = () => {
   showCreatedModal.value = false;
-  showOnDisplay.value = true
+  setTimeout(() => {
+    showOnDisplay.value = true;
+  }, 3000);
 };
 onMounted(() => {
   showCreatedModal.value = true;
@@ -329,7 +331,6 @@ onMounted(() => {
   step.value = 1;
   stepp.value = 1;
 });
-
 const openModal = (e) => {
   displayModal.value = true;
 };
@@ -343,36 +344,14 @@ const closeMobileModal = (e) => {
   showMobileModal.value = false;
 };
 
-// const updateFilteredProducts = (selectedTab, searchQuery) => {
-//   if (selectedTab === "All Categories") {
-//     products.value = initialProducts;
-//   } else {
-//     products.value = initialProducts.filter((product) => product.snippet === selectedTab);
-//   }
-// };
-
-const updateFilteredProducts = (selectedTab, searchQuery) => {
+const updateFilteredProducts = (selectedTab) => {
   let filtered = initialProducts;
-
   if (selectedTab !== "All Categories") {
     filtered = initialProducts.filter((product) => product.snippet === selectedTab);
   }
 
-  if (searchQuery) {
-    const query = searchQuery.toLowerCase().trim();
-    filtered = filtered.filter(
-      (product) =>
-        product.name.toLowerCase().includes(query) ||
-        (product.Addons &&
-          product.Addons.selections.some((selection) =>
-            selection.label.toLowerCase().includes(query)
-          ))
-    );
-  }
-
   products.value = filtered;
 };
-
 const updateSearchedProducts = (searchQuery) => {
   let filtered = initialProducts;
 
@@ -396,7 +375,11 @@ const updateSearchedProducts = (searchQuery) => {
     );
   }
 
+  // Update products
   products.value = filtered;
+
+  // Update showEmptySearch based on the length of filtered products and search query
+  showEmptySearch.value = searchQuery && filtered.length === 0;
 };
 </script>
 
@@ -442,11 +425,11 @@ const updateSearchedProducts = (searchQuery) => {
 
 @media screen and (max-width: 550px) {
   .product-container {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
-  gap: 24px 28px;
-}
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+    gap: 24px 28px;
+  }
   .overall-container {
     display: flex;
     flex-direction: column;
@@ -462,10 +445,10 @@ const updateSearchedProducts = (searchQuery) => {
 
 @media screen and (max-width: 300px) {
   .product-container {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
-  gap: 24px 28px;
-}
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+    gap: 24px 28px;
+  }
 }
 </style>

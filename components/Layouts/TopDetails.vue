@@ -25,6 +25,7 @@
 <script setup>
 import { ref, defineEmits } from 'vue'
 import { logo, search, Cart } from "../../utils/svg";
+const cartStore = useCartStore();
 
 import { useCartStore } from '~/stores/index.js';
 const cartItems = useCartStore().carts;
@@ -32,6 +33,7 @@ const TotalCart = computed(() => useCartStore().cartLength);
 
 
 const searchQuery = ref('');
+
 
 
 
@@ -43,6 +45,9 @@ const searchProducts = () => {
 const triggerCart = (e) => {
     emit('openCart')
 }
+watch(searchQuery, () => {
+  cartStore.searchQuery = searchQuery.value;
+});
 </script>
 
 <style scoped>

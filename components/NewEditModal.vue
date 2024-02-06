@@ -305,4 +305,23 @@ button svg {
   gap: 48px;
   flex-direction: column;
 }
+
+@media screen and (max-width: 550px) {
+  .cancel-btn{
+    border: 1px solid white;
+    width: 100%;
+  position: sticky;
+  top: 0;
+  background: white;
+  padding:16px 0px;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+.product-details{
+  padding: 0px 16px 0px 16px;
+}
+.image-cont{
+  padding: 0px 16px 16px 16px;
+}
+}
 </style>

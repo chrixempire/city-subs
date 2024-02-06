@@ -29,6 +29,7 @@ const emit = defineEmits(["seeMore"]);
 const seeMore = (e) => {
   emit("seeMore");
 };
+
 </script>
 
 <style scoped>
@@ -60,7 +61,7 @@ const seeMore = (e) => {
   /* height: 100vh; */
 
   margin: auto;
-  padding-top: 80px;
+  padding-top: 0px;
 }
 }
 </style>

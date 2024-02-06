@@ -61,7 +61,10 @@ const NextPage = () => {
   align-items: flex-start;
   gap: 40px;
   flex-direction: column;
-  width: 330px;
+  min-width: 330px;
+  width: 100%;
+  padding-top:16px ;
+
 }
 
 .select-container {
@@ -90,6 +93,7 @@ const NextPage = () => {
     gap: 40px;
     flex-direction: column;
     width: 100%;
+    padding: 16px;
   }
 }
 </style>

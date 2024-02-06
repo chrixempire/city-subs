@@ -293,5 +293,11 @@ button svg {
   transition: all 0.3s ease;
   z-index: 2;
 }
+.product-details{
+  padding: 0px 16px 0px 16px;
+}
+.image-cont{
+  padding: 0px 16px 16px 16px;
+}
 }
 </style>

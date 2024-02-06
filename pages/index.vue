@@ -58,13 +58,16 @@
                   :data="product"
                   @clickedButton="open(product)"
                 />
+
+             
               </div>
+   
             </div>
             <div
               v-if="!products.length && showEmptySearch"
               class="search-empty-state"
             >
-              <SearchEmptyState />
+              <SearchEmptyState @seeMore="seeMore" />
             </div>
 
             <div class="modals">
@@ -132,7 +135,9 @@ const showSuccessModal = ref(false);
 const showMobileModal = ref(false);
 const showCreatedModal = ref(false);
 const showOnDisplay = ref(false);
-const showEmptySearch = ref(false)
+const showEmptySearch = ref(false);
+const searchQuery = ref("");
+
 
 let form = ref(null);
 const selectedCartItem = ref(null);
@@ -321,9 +326,8 @@ const products = ref(initialProducts);
 
 const closedModal = () => {
   showCreatedModal.value = false;
-  setTimeout(() => {
-    showOnDisplay.value = true;
-  }, 3000);
+  showOnDisplay.value = true;
+
 };
 onMounted(() => {
   showCreatedModal.value = true;
@@ -352,25 +356,27 @@ const updateFilteredProducts = (selectedTab) => {
 
   products.value = filtered;
 };
-const updateSearchedProducts = (searchQuery) => {
-  let filtered = initialProducts;
 
-  if (searchQuery) {
-    const query = searchQuery.toLowerCase().trim();
-    filtered = filtered.filter(
+const updateSearchedProducts = (query) => {
+  let filtered = initialProducts;
+  searchQuery.value = query; // Update the searchQuery ref
+
+  if (query) {
+    const lowerCaseQuery = query.toLowerCase().trim();
+    filtered = initialProducts.filter(
       (product) =>
-        product.name.toLowerCase().includes(query) ||
-        product.snippet.toLowerCase().includes(query) ||
-        product.price.toString().includes(query) || // Convert price to string for search
+        product.name.toLowerCase().includes(lowerCaseQuery) ||
+        product.snippet.toLowerCase().includes(lowerCaseQuery) ||
+        product.price.toString().includes(lowerCaseQuery) ||
         (product.Addons &&
           product.Addons.selections.some((selection) =>
-            selection.label.toLowerCase().includes(query)
+            selection.label.toLowerCase().includes(lowerCaseQuery)
           )) ||
         (product.Addons &&
           product.Addons.foods.some(
             (food) =>
-              food.name.toLowerCase().includes(query) ||
-              food.price.toString().includes(query) // Convert food price to string for search
+              food.name.toLowerCase().includes(lowerCaseQuery) ||
+              food.price.toString().includes(lowerCaseQuery)
           ))
     );
   }
@@ -379,8 +385,16 @@ const updateSearchedProducts = (searchQuery) => {
   products.value = filtered;
 
   // Update showEmptySearch based on the length of filtered products and search query
-  showEmptySearch.value = searchQuery && filtered.length === 0;
+  showEmptySearch.value = query && filtered.length === 0;
 };
+
+
+const seeMore = () => {
+  searchQuery.value = ''; // Clear the search query
+  cartStore.searchQuery = ''; // Clear the search query in the store
+  updateSearchedProducts(''); // Update the searched products with an empty query
+};
+
 </script>
 
 <style scoped>

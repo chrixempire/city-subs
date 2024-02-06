@@ -4,6 +4,7 @@ export const useCartStore = defineStore('CartStore',{
     state: () => ({
         carts: [],
         isInitialized: false,
+        searchQuery: '',
     }),
     
     getters: {

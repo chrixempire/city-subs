@@ -118,7 +118,7 @@ body.show-modal {
   .modal-container {
     width: 100%;
     display: flex;
-    padding: 24px;
+    padding: 0px 16px 16px 16px;
     border-radius: 24px 24px 0px 0px;
     animation: slideUpDown 0.5s ease-in-out;
   }

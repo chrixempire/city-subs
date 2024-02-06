@@ -202,6 +202,7 @@ const addToCart = () => {
   background: white;
   padding:16px 0px;
   transition: all 0.3s ease;
+  z-index: 2;
 }
 .cancel {
   background: var(--grey---grey6);
@@ -280,5 +281,17 @@ button svg {
   justify-content: space-between;
   gap: 48px;
   flex-direction: column;
+}
+@media screen and (max-width: 550px) {
+  .cancel-btn{
+    border: 1px solid white;
+    width: 100%;
+  position: sticky;
+  top: 0;
+  background: white;
+  padding:16px 0px;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
 }
 </style>

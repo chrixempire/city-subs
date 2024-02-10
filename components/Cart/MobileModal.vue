@@ -7,16 +7,25 @@
           :class="{ 'slide-left': step > prevStep, 'slide-right': step < prevStep }"
         >
           <div class="cart-list" v-if="step === 1 || stepMobile === 2">
-            <CartList    @openEditModal="openEditModal" @closeCart="closeCart" :cart="carts" />
+            <CartList
+              @openEditModal="openEditModal"
+              @closeCart="closeCart"
+              :cart="carts"
+            />
           </div>
-
-          <DeliveryInfo @clickButton="prevCart" @checkoutDone="checkoutDone" v-if="step === 2 && stepMobile === 1" />
+          <div class="delievery">
+            <DeliveryInfo
+              @clickButton="prevCart"
+              @checkoutDone="checkoutDone"
+              v-if="step === 2 && stepMobile === 1"
+            />
+          </div>
         </div>
         <div class="subtotal-container" v-if="cartLength && step === 1">
           <div class="subtotal">
             <p class="text-body-small-regular regular text-grey2">
               Subtotal({{ TotalCart }} {{ mealText }})
-              </p>
+            </p>
             <p class="text-body-small-medium medium text-grey1">₦{{ totalPrice }}</p>
           </div>
           <div class="btn">
@@ -38,30 +47,28 @@
 
 <script setup>
 import { logo, search, cancel } from "../utils/svg";
-import { ref,  defineEmits, defineProps, computed } from "vue";
+import { ref, defineEmits, defineProps, computed } from "vue";
 const cartStore = useCartStore();
-import { useCartStore } from '~/stores/index.js';
+import { useCartStore } from "~/stores/index.js";
 const step = ref(1);
 const prevStep = ref(1);
-const TotalPrice = ref(3500);
-const numberOfMeals = ref(4);
 const header = ref("My order");
 const isLoading = ref(false);
 const props = defineProps({
   showMobileModal: {
     type: Boolean,
-    required: true,
+    default: false,
   },
   carts: {
     type: Array,
     required: true,
   },
-  stepMobile:{
-    type:Number,
-    required: true
-  }
+  stepMobile: {
+    type: Number,
+    required: true,
+  },
 });
-const emit = defineEmits(["closeCart",'checkoutDone',"openEditModal"]);
+const emit = defineEmits(["closeCart", "checkoutDone", "openEditModal"]);
 const openEditModal = (data) => {
   emit("openEditModal", data);
 };
@@ -79,46 +86,48 @@ const checkout = (e) => {
 };
 const prevCart = (e) => {
   prevStep.value = step.value;
-    step.value--
+  step.value--;
 };
 const TotalCart = computed(() => useCartStore().cartLength);
 const cartLength = computed(() => props.carts.length > 0);
 const mealText = computed(() => {
   if (TotalCart.value === 1) {
-    return 'meal';
+    return "meal";
   } else {
-    return 'meals';
+    return "meals";
   }
 });
 
-
-const totalQuantity = computed(() => {
-  // Load cart data from the store
-  cartStore.loadFromLocalStorage();
-
-  // Calculate the total quantity by summing up the quantities of all objects in the cart array
-  return cartStore.carts.reduce((total, item) => total + item.quantity, 0);
-});
+// const totalQuantity = computed(() => {
+//   cartStore.loadFromLocalStorage();
+//   return cartStore.carts.reduce((total, item) => total + item.quantity, 0);
+// });
 const totalPrice = computed(() => {
-  // Load cart data from the store
   cartStore.loadFromLocalStorage();
-
-  // Calculate the total quantity by summing up the quantities of all objects in the cart array
   return cartStore.carts.reduce((total, item) => total + item.price, 0);
 });
 
-const isMobile = ref(process.client ? window.innerWidth <= 550 : false);
+const isMobile = ref(false);
 
 onMounted(() => {
   if (process.client) {
+    isMobile.value = window.innerWidth <= 550;
+
     const handleResize = () => {
       isMobile.value = window.innerWidth <= 550;
     };
+
     window.addEventListener("resize", handleResize);
-    return () => {
+
+    onUnmounted(() => {
       window.removeEventListener("resize", handleResize);
-    };
+    });
+  } else {
+    // Set default value for SSR
+    isMobile.value = false;
   }
+
+  // Additional logic if needed
   window.scrollTo(0, 0);
 });
 </script>
@@ -153,10 +162,12 @@ onMounted(() => {
 .modal-slide-leave-from {
   transform: translateX(0);
 }
-.modal-content{
-    height: 100vh;
-    width: 100%;
-    display: flex;
+.modal-content {
+  height: 100vh;
+  width: 100%;
+}
+.delievery {
+  width: 100%;
 }
 .subtotal {
   width: 100%;
@@ -191,9 +202,9 @@ onMounted(() => {
   padding: 16px 24px 32px 24px;
 }
 .cart-list {
+  width: 100%;
   margin-bottom: 100px;
 }
-
 
 @keyframes slideLeft {
   from {
@@ -216,14 +227,11 @@ onMounted(() => {
 }
 
 .slide-left {
-    height: 100vh;
+  height: 100vh;
   animation: slideLeft 0.4s ease-in-out;
 }
 
 .slide-right {
   animation: slideRight 0.4s ease-in-out;
 }
-
-
-
 </style>

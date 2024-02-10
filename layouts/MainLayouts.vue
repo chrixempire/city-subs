@@ -2,17 +2,21 @@
   <div>
     <div class="top-details">
       <section class="top-detail">
-        <LayoutsTopDetails v-if="!isMobile"
-         @openCart="openCartModal" 
-         class="desktop" 
-         @search="handleSearch" 
-         />
         <LayoutsMobileTopDetails
           v-if="isMobile"
           @openCartModal="openMobileCart"
-          @search="handleSearch" 
+          @search="handleSearch"
+          ref="mobileTopDetails"
           class="mobile"
         />
+        <LayoutsTopDetails
+          v-if="!isMobile"
+          @openCart="openCartModal"
+          class="desktop"
+          ref="topDetails"
+          @search="handleSearch"
+        />
+  
       </section>
       <div class="filter-tabs">
         <div
@@ -36,10 +40,15 @@
 
 <script setup>
 import { ref, defineEmits, defineProps, onMounted } from "vue";
-const props = defineProps(["products", "tabs"]);
+const props = defineProps(["tabs"]);
 const activeTab = ref(0);
 const tabs = props.tabs;
-const emit = defineEmits(["openCartModal", "openMobileCart", "filterProducts", "filteredProducts"]);
+const emit = defineEmits([
+  "openCartModal",
+  "openMobileCart",
+  "filterProducts",
+  "filteredProducts",
+]);
 
 const searchQuery = ref("");
 
@@ -60,18 +69,27 @@ const openMobileCart = () => {
   emit("openMobileCart");
 };
 
-const isMobile = ref(process.client ? window.innerWidth <= 550 : false);
+const isMobile = ref(false);
 
 onMounted(() => {
   if (process.client) {
+    isMobile.value = window.innerWidth <= 550;
+
     const handleResize = () => {
       isMobile.value = window.innerWidth <= 550;
     };
+
     window.addEventListener("resize", handleResize);
-    return () => {
+
+    onUnmounted(() => {
       window.removeEventListener("resize", handleResize);
-    };
+    });
+  } else {
+    // Set default value for SSR
+    isMobile.value = false;
   }
+
+  // Additional logic if needed
   window.scrollTo(0, 0);
 });
 </script>

@@ -44,6 +44,14 @@ const searchProducts = () => {
 const openCartModal = (e) => {
   emit("openCartModal");
 };
+
+const clearSearchInput = () => {
+  searchQuery.value = '';
+};
+
+defineExpose({
+  clearSearchInput
+});
 </script>
 
 <style scoped>

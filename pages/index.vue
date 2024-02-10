@@ -14,71 +14,35 @@
     </ModalWrapper>
   </div>
   <div>
-    <MainLayouts
-      @openCartModal="openModal($event)"
-      @openMobileCart="openMobileCart($event)"
-      :tabs="tabs"
-      :products="products"
-      @filterProducts="updateFilteredProducts"
-      @filteredProducts="updateSearchedProducts"
-    >
+    <MainLayouts @openCartModal="openModal($event)" @openMobileCart="openMobileCart($event)" :tabs="tabs"
+      @filterProducts="updateFilteredProducts" @filteredProducts="updateSearchedProducts" ref="mainLayouts">
       <template v-slot:container>
-        <CartModal
-          :carts="cartItems"
-          :showModal="displayModal"
-          @closeCart="closeModal($event)"
-          @checkoutDone="checkoutDone($event)"
-          :stepped="step"
-          @openEditModal="openEditModal"
-        />
-        <CartMobileModal
-          :carts="cartItems"
-          :showMobileModal="showMobileModal"
-          @closeCart="closeMobileModal($event)"
-          @checkoutDone="checkoutDone($event)"
-          :stepMobile="stepp"
-          @openEditModal="openEditModal"
-        />
+        <CartModal :carts="cartItems" :showModal="displayModal" @closeCart="closeModal($event)"
+          @checkoutDone="checkoutDone($event)" :stepped="step" @openEditModal="openEditModal" />
+        <CartMobileModal :carts="cartItems" :showMobileModal="showMobileModal" @closeCart="closeMobileModal($event)"
+          @checkoutDone="checkoutDone($event)" :stepMobile="stepp" @openEditModal="openEditModal" />
         <div class="overall-container">
           <div class="products">
-            <div
-              v-if="
-                (!products.length || !showOnDisplay) &&
-                !(!products.length  && showEmptySearch)
-              "
-              class="web-loader"
-            >
+            <div v-if="(!products.length || !showOnDisplay) &&
+              !(!products.length && showEmptySearch)
+              " class="web-loader">
               <LoaderWeb />
             </div>
             <div class="product-content" v-if="showOnDisplay || !showEmptySearch">
               <div class="product-container">
-                <ProductCard
-                  v-for="(product, index) in products"
-                  :key="index"
-                  :data="product"
-                  @clickedButton="open(product)"
-                />
-
-             
+                <ProductCard v-for="(product, index) in products" :key="index" :data="product"
+                  @clickedButton="open(product)" />
               </div>
-   
             </div>
-            <div
-              v-if="!products.length && showEmptySearch"
-              class="search-empty-state"
-            >
-              <SearchEmptyState @seeMore="seeMore" />
+            <div v-if="!products.length && showEmptySearch" class="search-empty-state">
+              <SearchEmptyState @seeMore="seeMore" @seeMoreMeals="seeMoreMeals" />
             </div>
 
             <div class="modals">
               <ModalWrapper :showModal="showModal">
                 <template v-slot:content>
                   <div class="Addons-container" v-if="selectedProduct">
-                    <NewAddons
-                      :data="selectedProduct"
-                      @closed="closemodal"
-                      @addToCart="addToCart"
-                    />
+                    <NewAddons :data="selectedProduct" @closed="closemodal" @addToCart="addToCart" />
                   </div>
                 </template>
               </ModalWrapper>
@@ -102,11 +66,7 @@
               <ModalWrapper :showModal="showEditModal">
                 <template v-slot:content>
                   <div class="Addons-container">
-                    <NewEditModal
-                      :data="selectedCartItem"
-                      :formData="form"
-                      @closed="closeEditModal"
-                    />
+                    <NewEditModal :data="selectedCartItem" :formData="form" @closed="closeEditModal" />
                   </div>
                 </template>
               </ModalWrapper>
@@ -124,7 +84,7 @@ import { ref, watchEffect, computed } from "vue";
 import { useCartStore } from "~/stores/index.js";
 const cartStore = useCartStore();
 
-const cartItems = computed(() => useCartStore().carts);
+const cartItems = computed(() => cartStore.carts);
 const step = ref(1);
 const stepp = ref(1);
 const displayModal = ref(false);
@@ -137,7 +97,6 @@ const showCreatedModal = ref(false);
 const showOnDisplay = ref(false);
 const showEmptySearch = ref(false);
 const searchQuery = ref("");
-
 
 let form = ref(null);
 const selectedCartItem = ref(null);
@@ -327,7 +286,6 @@ const products = ref(initialProducts);
 const closedModal = () => {
   showCreatedModal.value = false;
   showOnDisplay.value = true;
-
 };
 onMounted(() => {
   showCreatedModal.value = true;
@@ -359,7 +317,7 @@ const updateFilteredProducts = (selectedTab) => {
 
 const updateSearchedProducts = (query) => {
   let filtered = initialProducts;
-  searchQuery.value = query; // Update the searchQuery ref
+  searchQuery.value = query;
 
   if (query) {
     const lowerCaseQuery = query.toLowerCase().trim();
@@ -380,21 +338,49 @@ const updateSearchedProducts = (query) => {
           ))
     );
   }
-
-  // Update products
   products.value = filtered;
-
-  // Update showEmptySearch based on the length of filtered products and search query
   showEmptySearch.value = query && filtered.length === 0;
 };
 
+const mainLayouts = ref(null);
 
+const isMobile = ref(false);
+
+onMounted(() => {
+  if (process.client) {
+    isMobile.value = window.innerWidth <= 550;
+
+    const handleResize = () => {
+      isMobile.value = window.innerWidth <= 550;
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    onUnmounted(() => {
+      window.removeEventListener("resize", handleResize);
+    });
+  } else {
+    // Set default value for SSR
+    isMobile.value = false;
+  }
+
+  // Additional logic if needed
+  window.scrollTo(0, 0);
+});
 const seeMore = () => {
-  searchQuery.value = ''; // Clear the search query
-  cartStore.searchQuery = ''; // Clear the search query in the store
-  updateSearchedProducts(''); // Update the searched products with an empty query
+  searchQuery.value = "";
+  updateSearchedProducts("");
+  if (mainLayouts.value) {
+    mainLayouts.value.$refs.topDetails.clearSearchInput();
+  }
 };
-
+const seeMoreMeals = () => {
+  searchQuery.value = "";
+  updateSearchedProducts("");
+  if (mainLayouts.value) {
+    mainLayouts.value.$refs.mobileTopDetails.clearSearchInput();
+  }
+};
 </script>
 
 <style scoped>
@@ -444,6 +430,7 @@ const seeMore = () => {
     grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
     gap: 24px 28px;
   }
+
   .overall-container {
     display: flex;
     flex-direction: column;
@@ -452,6 +439,7 @@ const seeMore = () => {
     gap: 40px;
     margin: 0px 16px 16px 16px;
   }
+
   .product-content {
     margin-bottom: 100px;
   }

@@ -94,18 +94,27 @@ const prevCart = (e) => {
   step.value--;
 };
 const cartLength = computed(() => props.carts.length > 0);
-const isMobile = ref(process.client ? window.innerWidth <= 550 : false);
+const isMobile = ref(false);
 
 onMounted(() => {
   if (process.client) {
+    isMobile.value = window.innerWidth <= 550;
+
     const handleResize = () => {
       isMobile.value = window.innerWidth <= 550;
     };
+
     window.addEventListener("resize", handleResize);
-    return () => {
+
+    onUnmounted(() => {
       window.removeEventListener("resize", handleResize);
-    };
+    });
+  } else {
+    // Set default value for SSR
+    isMobile.value = false;
   }
+
+  // Additional logic if needed
   window.scrollTo(0, 0);
 });
 </script>
